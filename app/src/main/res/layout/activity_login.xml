@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary2"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="80dp"
+    tools:context=".pacjent.PacjentLoginActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+
+        android:layout_marginBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutemail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo">
+        <EditText
+            android:inputType="textEmailAddress"
+            android:hint="Email"
+            android:textColor="@color/colorText"
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout
+        >
+
+    <com.google.android.material.textfield.TextInputLayout
+
+        android:id="@+id/layoutpassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutemail"
+        app:passwordToggleEnabled="true">
+        <EditText
+            android:inputType="textPassword"
+            android:hint="Hasło"
+            android:textColor="@color/colorText"
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout
+        >
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_marginTop="35dp"
+        android:layout_below="@id/layoutpassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutpassword"
+        android:layout_marginTop="38dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="ZALOGUJ"
+        android:textColor="@color/colorText" />
+
+    <TextView
+        android:id="@+id/link_regist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:gravity="center"
+        android:text="Zarejestruj"
+        android:textColor="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="275dp"
+        android:layout_height="57dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="89dp"
+        android:text="Logowanie pacjenta"
+        android:textSize="24sp" />
+
+</RelativeLayout>
