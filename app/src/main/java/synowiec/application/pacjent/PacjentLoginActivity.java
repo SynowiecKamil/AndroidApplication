@@ -36,7 +36,7 @@ public class PacjentLoginActivity extends AppCompatActivity {
     private Button btn_login;
     private TextView link_regist;
     private ProgressBar loading;
-    private static String URL_LOGIN = "http://192.168.21.17/android_register_login/loginPacjent.php";
+    private static String URL_LOGIN = "http://192.168.21.17/android_application/loginPatient.php";
     SessionManager sessionManager;
 
     @Override

@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     require_once 'connect.php';
 
-    $sql = "UPDATE fizjoterapeuta SET name='$name', email='$email' WHERE id='$id' ";
+    $sql = "UPDATE patient SET name='$name', email='$email' WHERE id='$id' ";
 
     if(mysqli_query($conn, $sql)) {
 

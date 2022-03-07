@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 
     require_once 'connect.php';
 
-    $sql = "SELECT * FROM fizjoterapeuta WHERE id='$id' ";
+    $sql = "SELECT * FROM physiotherapist WHERE id='$id' ";
 
     $response = mysqli_query($conn, $sql);
 

@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 
     require_once 'connect.php';
 
-    $sql = "SELECT * FROM pacjent WHERE email='$email' ";
+    $sql = "SELECT * FROM patient WHERE email='$email' ";
 
     $response = mysqli_query($conn, $sql);
 

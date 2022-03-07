@@ -50,9 +50,9 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
     private Button btn_logout, btn_photo_upload;
     SessionManager sessionManager;
     String getId;
-    private static String URL_READ = "http://192.168.21.17/android_register_login/read_detail_fizjo.php";
-    private static String URL_EDIT = "http://192.168.21.17/android_register_login/edit_detail_fizjo.php";
-    private static String URL_UPLOAD = "http://192.168.21.17/android_register_login/uploadFizjo.php";
+    private static String URL_READ = "http://192.168.21.17/android_application/readDetailPhysio.php";
+    private static String URL_EDIT = "http://192.168.21.17/android_application/editDetailPhysio.php";
+    private static String URL_UPLOAD = "http://192.168.21.17/android_application/uploadPhysio.php";
     private Menu action;
     private Bitmap bitmap;
     CircleImageView profile_image;

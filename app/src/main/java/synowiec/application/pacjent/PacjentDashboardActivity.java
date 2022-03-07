@@ -48,9 +48,9 @@ public class PacjentDashboardActivity extends AppCompatActivity {
     private Button btn_logout, btn_photo_upload;
     SessionManager sessionManager;
     String getId;
-    private static String URL_READ = "http://192.168.21.17/android_register_login/read_detail_pacjent.php";
-    private static String URL_EDIT = "http://192.168.21.17/android_register_login/edit_detail_pacjent.php";
-    private static String URL_UPLOAD = "http://192.168.21.17/android_register_login/uploadPacjent.php";
+    private static String URL_READ = "http://192.168.21.17/android_application/readDetailPatient.php";
+    private static String URL_EDIT = "http://192.168.21.17/android_application/editDetailPatient.php";
+    private static String URL_UPLOAD = "http://192.168.21.17/android_application/uploadPatient.php";
     private Menu action;
     private Bitmap bitmap;
     CircleImageView profile_image;

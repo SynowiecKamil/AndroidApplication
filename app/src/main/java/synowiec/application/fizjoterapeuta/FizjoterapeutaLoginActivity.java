@@ -36,7 +36,7 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
     private Button btn_login;
     private TextView link_regist;
     private ProgressBar loading;
-    private static String URL_LOGIN = "http://192.168.21.17/android_register_login/loginFizjo.php";
+    private static String URL_LOGIN = "http://192.168.21.17/android_application/loginPhysio.php";
     SessionManager sessionManager;
 
     @Override
@@ -61,8 +61,8 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
                 if (!mEmail.isEmpty() || !mPass.isEmpty()) {
                     Login(mEmail, mPass);
                 } else {
-                    email.setError("Please insert email");
-                    password.setError("Please insert password");
+                    email.setError("Proszę wpisać email");
+                    password.setError("Proszę wpisać hasło");
                 }
             }
         });

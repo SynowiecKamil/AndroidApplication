@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] =='POST'){
 
     require_once 'connect.php';
 
-    $sql = "INSERT INTO pacjent (name, email, password) VALUES ('$name', '$email', '$password')";
+    $sql = "INSERT INTO physiotherapist (name, email, password) VALUES ('$name', '$email', '$password')";
 
     if ( mysqli_query($conn, $sql) ) {
         $result["success"] = "1";

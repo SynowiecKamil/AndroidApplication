@@ -6,11 +6,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $photo = $_POST['photo'];
 
     $path = "profile_image/$id.jpeg";
-    $finalPath = "http://192.168.21.17/android_register_login/".$path;
+    $finalPath = "http://192.168.21.17/android_application/".$path;
 
     require_once 'connect.php';
 
-    $sql = "UPDATE pacjent SET photo='$finalPath' WHERE id='$id' ";
+    $sql = "UPDATE patient SET photo='$finalPath' WHERE id='$id' ";
 
     if (mysqli_query($conn, $sql)) {
         
