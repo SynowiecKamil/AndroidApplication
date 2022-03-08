@@ -1,4 +1,4 @@
-package synowiec.application.pacjent;
+package synowiec.application.patient;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,9 +41,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
 
-public class PacjentDashboardActivity extends AppCompatActivity {
+public class PatientDashboardActivity extends AppCompatActivity {
 
-    private static final String TAG = PacjentDashboardActivity.class.getSimpleName(); //getting the info
+    private static final String TAG = PatientDashboardActivity.class.getSimpleName(); //getting the info
     private TextView name, email;
     private Button btn_logout, btn_photo_upload;
     SessionManager sessionManager;
@@ -58,10 +58,10 @@ public class PacjentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pacjent_dashboard);
+        setContentView(R.layout.activity_patient_dashboard);
 
         sessionManager = new SessionManager(this);
-        sessionManager.checkLogin("pacjent");
+        sessionManager.checkLogin("patient");
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
@@ -75,7 +75,7 @@ public class PacjentDashboardActivity extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sessionManager.logout("pacjent");
+                sessionManager.logout("patient");
             }
         });
 
@@ -126,7 +126,7 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(PacjentDashboardActivity.this, "Błąd odczytu danych "+e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PatientDashboardActivity.this, "Błąd odczytu danych "+e.toString(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -135,7 +135,7 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(PacjentDashboardActivity.this, "Błąd odczytu danych "+error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PatientDashboardActivity.this, "Błąd odczytu danych "+error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -229,14 +229,14 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")){
-                                Toast.makeText(PacjentDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
                                 sessionManager.createSession(name, email, id);
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(PacjentDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PatientDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -245,7 +245,7 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(PacjentDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PatientDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -307,13 +307,13 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")){
-                                Toast.makeText(PacjentDashboardActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientDashboardActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(PacjentDashboardActivity.this, "Try Again!"+e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PatientDashboardActivity.this, "Try Again!"+e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -321,7 +321,7 @@ public class PacjentDashboardActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(PacjentDashboardActivity.this, "Try Again!" + error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PatientDashboardActivity.this, "Try Again!" + error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {

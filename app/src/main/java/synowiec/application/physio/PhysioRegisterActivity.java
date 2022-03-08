@@ -1,4 +1,4 @@
-package synowiec.application.fizjoterapeuta;
+package synowiec.application.physio;
 
 import android.os.Bundle;
 import android.view.View;
@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import synowiec.application.R;
-import synowiec.application.pacjent.PacjentLoginActivity;
 
-public class FizjoterapeutaRegisterActivity extends AppCompatActivity {
+public class PhysioRegisterActivity extends AppCompatActivity {
 
     private EditText name, email, password, c_password;
     private Button btn_regist;
@@ -36,7 +35,7 @@ public class FizjoterapeutaRegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fizjoterapeuta_register);
+        setContentView(R.layout.activity_physio_register);
 
         loading = findViewById(R.id.loading);
         name = findViewById(R.id.name);
@@ -71,18 +70,18 @@ public class FizjoterapeutaRegisterActivity extends AppCompatActivity {
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")) {
-                                Toast.makeText(FizjoterapeutaRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
                                 loading.setVisibility(View.GONE);
                             }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
                                 btn_regist.setVisibility(View.VISIBLE);
-                                Toast.makeText(FizjoterapeutaRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
                             }
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(FizjoterapeutaRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
                             loading.setVisibility(View.GONE);
                             btn_regist.setVisibility(View.VISIBLE);
                         }
@@ -91,7 +90,7 @@ public class FizjoterapeutaRegisterActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(FizjoterapeutaRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
                         loading.setVisibility(View.GONE);
                         btn_regist.setVisibility(View.VISIBLE);
                     }

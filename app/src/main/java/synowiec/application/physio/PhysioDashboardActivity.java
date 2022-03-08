@@ -1,4 +1,4 @@
-package synowiec.application.fizjoterapeuta;
+package synowiec.application.physio;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -42,10 +42,10 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 
 
-public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
+public class PhysioDashboardActivity extends AppCompatActivity{
 
 
-    private static final String TAG = FizjoterapeutaDashboardActivity.class.getSimpleName(); //getting the info
+    private static final String TAG = PhysioDashboardActivity.class.getSimpleName(); //getting the info
     private TextView name, email;
     private Button btn_logout, btn_photo_upload;
     SessionManager sessionManager;
@@ -60,10 +60,10 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fizjoterapeuta_dashboard);
+        setContentView(R.layout.activity_physio_dashboard);
 
         sessionManager = new SessionManager(this);
-        sessionManager.checkLogin("fizjoterapeuta");
+        sessionManager.checkLogin("physio");
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
@@ -77,7 +77,7 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sessionManager.logout("fizjoterapeuta");
+                sessionManager.logout("physio");
             }
         });
 
@@ -128,7 +128,7 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(FizjoterapeutaDashboardActivity.this, "Błąd ładowania danych "+e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioDashboardActivity.this, "Błąd ładowania danych "+e.toString(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -137,7 +137,7 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(FizjoterapeutaDashboardActivity.this, "Błąd ładowania danych "+error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioDashboardActivity.this, "Błąd ładowania danych "+error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -231,14 +231,14 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")){
-                                Toast.makeText(FizjoterapeutaDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
                                 sessionManager.createSession(name, email, id);
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(FizjoterapeutaDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -247,7 +247,7 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(FizjoterapeutaDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -309,13 +309,13 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")){
-                                Toast.makeText(FizjoterapeutaDashboardActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioDashboardActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(FizjoterapeutaDashboardActivity.this, "Try Again!"+e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioDashboardActivity.this, "Try Again!"+e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -323,7 +323,7 @@ public class FizjoterapeutaDashboardActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(FizjoterapeutaDashboardActivity.this, "Try Again!" + error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioDashboardActivity.this, "Try Again!" + error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {

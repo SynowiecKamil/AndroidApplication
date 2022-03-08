@@ -1,4 +1,4 @@
-package synowiec.application.pacjent;
+package synowiec.application.patient;
 
 
 import android.content.Intent;
@@ -30,7 +30,7 @@ import java.util.Map;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
 
-public class PacjentLoginActivity extends AppCompatActivity {
+public class PatientLoginActivity extends AppCompatActivity {
 
     private EditText email, password;
     private Button btn_login;
@@ -42,7 +42,7 @@ public class PacjentLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_patient_login);
 
         sessionManager = new SessionManager(this);
 
@@ -70,7 +70,7 @@ public class PacjentLoginActivity extends AppCompatActivity {
         link_regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PacjentLoginActivity.this, PacjentRegisterActivity.class));
+                startActivity(new Intent(PatientLoginActivity.this, PatientRegisterActivity.class));
             }
         });
 
@@ -102,7 +102,7 @@ public class PacjentLoginActivity extends AppCompatActivity {
 
                                     sessionManager.createSession(name, email, id);
 
-                                    Intent intent = new Intent(PacjentLoginActivity.this, PacjentDashboardActivity.class);
+                                    Intent intent = new Intent(PatientLoginActivity.this, PatientDashboardActivity.class);
                                     intent.putExtra("name", name);
                                     intent.putExtra("email", email);
                                     startActivity(intent);
@@ -116,14 +116,14 @@ public class PacjentLoginActivity extends AppCompatActivity {
                             }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
                                 btn_login.setVisibility(View.VISIBLE);
-                                Toast.makeText(PacjentLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             loading.setVisibility(View.GONE);
                             btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(PacjentLoginActivity.this, "Błąd logowania " +e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PatientLoginActivity.this, "Błąd logowania " +e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -132,7 +132,7 @@ public class PacjentLoginActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         loading.setVisibility(View.GONE);
                         btn_login.setVisibility(View.VISIBLE);
-                        Toast.makeText(PacjentLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PatientLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {

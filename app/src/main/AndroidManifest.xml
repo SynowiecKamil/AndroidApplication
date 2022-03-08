@@ -21,17 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".pacjent.PacjentDashboardActivity">
+        <activity android:name=".patient.PatientDashboardActivity">
         </activity>
-        <activity android:name=".fizjoterapeuta.FizjoterapeutaDashboardActivity">
+        <activity android:name=".physio.PhysioDashboardActivity">
     </activity>
-        <activity android:name=".pacjent.PacjentLoginActivity">
+        <activity android:name=".patient.PatientLoginActivity">
         </activity>
-        <activity android:name=".fizjoterapeuta.FizjoterapeutaLoginActivity">
+        <activity android:name=".physio.PhysioLoginActivity">
         </activity>
-        <activity android:name=".pacjent.PacjentRegisterActivity">
+        <activity android:name=".patient.PatientRegisterActivity">
         </activity>
-        <activity android:name=".fizjoterapeuta.FizjoterapeutaRegisterActivity">
+        <activity android:name=".physio.PhysioRegisterActivity">
         </activity>
     </application>
 

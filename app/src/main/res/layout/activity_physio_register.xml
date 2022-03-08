@@ -10,7 +10,7 @@
     android:paddingRight="30dp"
     android:paddingTop="80dp"
     android:background="@color/colorPrimary2"
-    tools:context=".fizjoterapeuta.FizjoterapeutaRegisterActivity">
+    tools:context=".physio.PhysioRegisterActivity">
 
     <TextView
         android:id="@+id/textView2"

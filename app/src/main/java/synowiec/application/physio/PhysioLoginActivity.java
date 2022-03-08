@@ -1,6 +1,5 @@
-package synowiec.application.fizjoterapeuta;
+package synowiec.application.physio;
 
-import synowiec.application.pacjent.*;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +29,7 @@ import java.util.Map;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
 
-public class FizjoterapeutaLoginActivity extends AppCompatActivity {
+public class PhysioLoginActivity extends AppCompatActivity {
 
     private EditText email, password;
     private Button btn_login;
@@ -42,7 +41,7 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fizjoterapeuta_login);
+        setContentView(R.layout.activity_physio_login);
 
         sessionManager = new SessionManager(this);
 
@@ -70,7 +69,7 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
         link_regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FizjoterapeutaLoginActivity.this, FizjoterapeutaRegisterActivity.class));
+                startActivity(new Intent(PhysioLoginActivity.this, PhysioRegisterActivity.class));
             }
         });
 
@@ -102,7 +101,7 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
 
                                     sessionManager.createSession(name, email, id);
 
-                                    Intent intent = new Intent(FizjoterapeutaLoginActivity.this, FizjoterapeutaDashboardActivity.class);
+                                    Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
                                     intent.putExtra("name", name);
                                     intent.putExtra("email", email);
                                     startActivity(intent);
@@ -116,14 +115,14 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
                             }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
                                 btn_login.setVisibility(View.VISIBLE);
-                                Toast.makeText(FizjoterapeutaLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             loading.setVisibility(View.GONE);
                             btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(FizjoterapeutaLoginActivity.this, "Błąd logowania " +e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioLoginActivity.this, "Błąd logowania " +e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -132,7 +131,7 @@ public class FizjoterapeutaLoginActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         loading.setVisibility(View.GONE);
                         btn_login.setVisibility(View.VISIBLE);
-                        Toast.makeText(FizjoterapeutaLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {

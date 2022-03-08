@@ -8,34 +8,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import synowiec.application.fizjoterapeuta.FizjoterapeutaDashboardActivity;
-import synowiec.application.pacjent.PacjentDashboardActivity;
+import synowiec.application.physio.PhysioDashboardActivity;
+import synowiec.application.patient.PatientDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn_pacjent;
-    private Button btn_fizjo;
+    private Button btn_patient;
+    private Button btn_physio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btn_pacjent = findViewById(R.id.btn_pacjent);
-        btn_fizjo = findViewById(R.id.btn_fizjo);
+        btn_patient = findViewById(R.id.btn_patient);
+        btn_physio = findViewById(R.id.btn_physio);
 
 
-        btn_pacjent.setOnClickListener(new View.OnClickListener() {
+        btn_patient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PacjentDashboardActivity.class));
+                startActivity(new Intent(MainActivity.this, PatientDashboardActivity.class));
             }
         });
 
-        btn_fizjo.setOnClickListener(new View.OnClickListener() {
+        btn_physio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, FizjoterapeutaDashboardActivity.class));
+                startActivity(new Intent(MainActivity.this, PhysioDashboardActivity.class));
             }
         });
 

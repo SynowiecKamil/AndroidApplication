@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pacjent.PacjentDashboardActivity">
+    tools:context=".physio.PhysioDashboardActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -34,11 +34,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-<!--        <ImageView-->
-<!--            android:src="@drawable/ic_name"-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp" />-->
+        <!--        <ImageView-->
+        <!--            android:src="@drawable/ic_name"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:layout_width="70dp"-->
+        <!--            android:layout_height="50dp" />-->
 
         <EditText
             android:id="@+id/name"
@@ -60,11 +60,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-<!--        <ImageView-->
-<!--            android:src="@drawable/ic_email"-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp" />-->
+        <!--        <ImageView-->
+        <!--            android:src="@drawable/ic_email"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:layout_width="70dp"-->
+        <!--            android:layout_height="50dp" />-->
 
         <EditText
             android:id="@+id/email"

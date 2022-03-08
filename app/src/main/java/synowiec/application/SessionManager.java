@@ -6,10 +6,10 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 
-import synowiec.application.fizjoterapeuta.FizjoterapeutaDashboardActivity;
-import synowiec.application.fizjoterapeuta.FizjoterapeutaLoginActivity;
-import synowiec.application.pacjent.PacjentDashboardActivity;
-import synowiec.application.pacjent.PacjentLoginActivity;
+import synowiec.application.physio.PhysioDashboardActivity;
+import synowiec.application.physio.PhysioLoginActivity;
+import synowiec.application.patient.PatientDashboardActivity;
+import synowiec.application.patient.PatientLoginActivity;
 
 public class SessionManager {
 
@@ -46,17 +46,17 @@ public class SessionManager {
 
     public void checkLogin(String user){
 
-        if(user == "pacjent"){
+        if(user == "patient"){
             if (!this.isLoggin()){
-                Intent i = new Intent(context, PacjentLoginActivity.class);
+                Intent i = new Intent(context, PatientLoginActivity.class);
                 context.startActivity(i);
-                ((PacjentDashboardActivity) context).finish();
+                ((PatientDashboardActivity) context).finish();
             }
         }else{
             if (!this.isLoggin()){
-                Intent i = new Intent(context, FizjoterapeutaLoginActivity.class);
+                Intent i = new Intent(context, PhysioLoginActivity.class);
                 context.startActivity(i);
-                ((FizjoterapeutaDashboardActivity) context).finish();
+                ((PhysioDashboardActivity) context).finish();
             }
         }
 
@@ -74,18 +74,18 @@ public class SessionManager {
 
     public void logout(String user){
 
-        if(user == "pacjent"){
+        if(user == "patient"){
             editor.clear();
             editor.commit();
-            Intent i = new Intent(context, PacjentLoginActivity.class);
+            Intent i = new Intent(context, PatientLoginActivity.class);
             context.startActivity(i);
-            ((PacjentDashboardActivity) context).finish();
+            ((PatientDashboardActivity) context).finish();
         }else{
             editor.clear();
             editor.commit();
-            Intent i = new Intent(context, FizjoterapeutaLoginActivity.class);
+            Intent i = new Intent(context, PhysioLoginActivity.class);
             context.startActivity(i);
-            ((FizjoterapeutaDashboardActivity) context).finish();
+            ((PhysioDashboardActivity) context).finish();
         }
 
 

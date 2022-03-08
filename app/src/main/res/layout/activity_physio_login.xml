@@ -4,24 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary2"
+    android:background="@color/colorPrimary"
     android:paddingLeft="30dp"
     android:paddingRight="30dp"
     android:paddingTop="80dp"
-    tools:context=".pacjent.PacjentLoginActivity">
+    tools:context=".physio.PhysioLoginActivity">
 
     <ImageView
         android:id="@+id/logo"
-
-        android:layout_marginBottom="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_width="381dp"
+        android:layout_height="176dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="30dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutemail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo">
+
         <EditText
             android:inputType="textEmailAddress"
             android:hint="Email"
@@ -29,6 +31,7 @@
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
     </com.google.android.material.textfield.TextInputLayout
         >
 
@@ -46,6 +49,7 @@
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
     </com.google.android.material.textfield.TextInputLayout
         >
 
@@ -63,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutpassword"
         android:layout_marginTop="38dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary2"
         android:text="ZALOGUJ"
         android:textColor="@color/colorText" />
 
@@ -78,13 +82,15 @@
         android:textColor="@color/colorAccent" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="275dp"
-        android:layout_height="57dp"
-        android:layout_alignParentTop="true"
+        android:id="@+id/textView3"
+        android:layout_width="352dp"
+        android:layout_height="125dp"
+        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="89dp"
-        android:text="Logowanie pacjenta"
+        android:layout_marginStart="29dp"
+        android:layout_marginLeft="77dp"
+        android:layout_marginTop="60dp"
+        android:text="Logowanie fizjoterapeuty"
         android:textSize="24sp" />
 
 </RelativeLayout>

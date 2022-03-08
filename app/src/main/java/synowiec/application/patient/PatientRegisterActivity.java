@@ -1,4 +1,4 @@
-package synowiec.application.pacjent;
+package synowiec.application.patient;
 
 import android.os.Bundle;
 import android.view.View;
@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import synowiec.application.R;
-import synowiec.application.fizjoterapeuta.FizjoterapeutaRegisterActivity;
 
-public class PacjentRegisterActivity extends AppCompatActivity {
+public class PatientRegisterActivity extends AppCompatActivity {
 
     private EditText name, email, password, c_password;
     private Button btn_regist;
@@ -36,7 +35,7 @@ public class PacjentRegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_patient_register);
 
         loading = findViewById(R.id.loading);
         name = findViewById(R.id.name);
@@ -71,18 +70,18 @@ public class PacjentRegisterActivity extends AppCompatActivity {
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")) {
-                                Toast.makeText(PacjentRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
                                 loading.setVisibility(View.GONE);
                             }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
                                 btn_regist.setVisibility(View.VISIBLE);
-                                Toast.makeText(PacjentRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
                             }
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(PacjentRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
                             loading.setVisibility(View.GONE);
                             btn_regist.setVisibility(View.VISIBLE);
                         }
@@ -91,7 +90,7 @@ public class PacjentRegisterActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(PacjentRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
                         loading.setVisibility(View.GONE);
                         btn_regist.setVisibility(View.VISIBLE);
                     }
