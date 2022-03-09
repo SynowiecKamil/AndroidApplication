@@ -31,7 +31,8 @@ import synowiec.application.SessionManager;
 
 public class PhysioLoginActivity extends AppCompatActivity {
 
-    private EditText email, password;
+    private EditText email;
+    private EditText password;
     private Button btn_login;
     private TextView link_regist;
     private ProgressBar loading;
@@ -75,7 +76,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
 
     }
 
-    private void Login(final String email, final String password) {
+    private void Login(final String sEmail, final String sPassword) {
 
         loading.setVisibility(View.VISIBLE);
         btn_login.setVisibility(View.GONE);
@@ -122,7 +123,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
                             e.printStackTrace();
                             loading.setVisibility(View.GONE);
                             btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(PhysioLoginActivity.this, "Błąd logowania " +e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędny email " +e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -138,8 +139,8 @@ public class PhysioLoginActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("email", email);
-                params.put("password", password);
+                params.put("email", sEmail);
+                params.put("password", sPassword);
                 return params;
             }
         };

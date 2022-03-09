@@ -86,4 +86,13 @@
         android:layout_width="match_parent"
         android:layout_height="55dp" />
 
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Powrót do logowania"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

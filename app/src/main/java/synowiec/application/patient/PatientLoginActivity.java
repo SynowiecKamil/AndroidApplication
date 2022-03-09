@@ -116,7 +116,7 @@ public class PatientLoginActivity extends AppCompatActivity {
                             }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
                                 btn_login.setVisibility(View.VISIBLE);
-                                Toast.makeText(PatientLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PatientLoginActivity.this, "Błąd logowania, błędne dane logowania", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
