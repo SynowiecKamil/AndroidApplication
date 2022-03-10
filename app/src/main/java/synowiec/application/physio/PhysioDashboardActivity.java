@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,9 +118,11 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                                     String strName = object.getString("name").trim();
                                     String strEmail = object.getString("email").trim();
+                                    String strImage = object.getString("image").trim();
 
                                     name.setText(strName);
                                     email.setText(strEmail);
+                                    Picasso.get().load(strImage).into(profile_image);
 
                                 }
 
@@ -270,7 +273,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+        startActivityForResult(Intent.createChooser(intent, "Wybierz obraz"), 1);
     }
 
     @Override
@@ -295,7 +298,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
     private void UploadPicture(final String id, final String photo) {
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Uploading...");
+        progressDialog.setMessage("Wgrywanie...");
         progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_UPLOAD,
@@ -309,13 +312,13 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                             String success = jsonObject.getString("success");
 
                             if (success.equals("1")){
-                                Toast.makeText(PhysioDashboardActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PhysioDashboardActivity.this, "Pomyślnie!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
-                            Toast.makeText(PhysioDashboardActivity.this, "Try Again!"+e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioDashboardActivity.this, "Spróbuj ponownie!"+e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -323,7 +326,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(PhysioDashboardActivity.this, "Try Again!" + error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhysioDashboardActivity.this, "Spróbuj ponownie!" + error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {

@@ -7,10 +7,11 @@ if ($_SERVER['REQUEST_METHOD'] =='POST'){
     $password = $_POST['password'];
 
     $password = password_hash($password, PASSWORD_DEFAULT);
+	$finalPath = "http://192.168.21.17/android_application/profile_image/logo.png";
 
     require_once 'connect.php';
 
-    $sql = "INSERT INTO physiotherapist (name, email, password) VALUES ('$name', '$email', '$password')";
+    $sql = "INSERT INTO physiotherapist (name, email, password, photo) VALUES ('$name', '$email', '$password', '$finalPath')";
 
     if ( mysqli_query($conn, $sql) ) {
         $result["success"] = "1";

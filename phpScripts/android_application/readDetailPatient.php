@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
  
              $h['name']        = $row['name'] ;
              $h['email']       = $row['email'] ;
+			 $h['image']      = $row['photo'];
  
              array_push($result["read"], $h);
  

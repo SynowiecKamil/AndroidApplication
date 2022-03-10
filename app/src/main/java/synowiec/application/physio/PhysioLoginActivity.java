@@ -26,14 +26,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import synowiec.application.MainActivity;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
+import synowiec.application.patient.PatientLoginActivity;
 
 public class PhysioLoginActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
-    private Button btn_login;
+    private Button btn_login, btn_back;
     private TextView link_regist;
     private ProgressBar loading;
     private static String URL_LOGIN = "http://192.168.21.17/android_application/loginPhysio.php";
@@ -50,6 +52,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         btn_login = findViewById(R.id.btn_login);
+        btn_back = findViewById(R.id.btn_back);
         link_regist = findViewById(R.id.link_regist);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +67,12 @@ public class PhysioLoginActivity extends AppCompatActivity {
                     email.setError("Proszę wpisać email");
                     password.setError("Proszę wpisać hasło");
                 }
+            }
+        });
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PhysioLoginActivity.this, MainActivity.class));
             }
         });
 

@@ -67,6 +67,17 @@
         android:text="ZALOGUJ"
         android:textColor="@color/colorText" />
 
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutpassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="109dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:text="Powrot"
+        android:textColor="@color/colorText" />
+
     <TextView
         android:id="@+id/link_regist"
         android:layout_width="match_parent"
