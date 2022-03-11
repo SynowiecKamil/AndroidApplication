@@ -27,6 +27,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -68,8 +70,13 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
+
+        name.setFocusableInTouchMode(false);
+        email.setFocusableInTouchMode(false);
+
         btn_logout = findViewById(R.id.btn_logout);
         btn_photo_upload = findViewById(R.id.btn_photo);
+        btn_photo_upload.setVisibility(View.GONE);
         profile_image = findViewById(R.id.profile_image);
 
         HashMap<String, String> user = sessionManager.getUserDetail();
@@ -97,6 +104,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
+        profile_image = findViewById(R.id.profile_image);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_READ,
                 new Response.Listener<String>() {
@@ -122,8 +130,10 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                                     name.setText(strName);
                                     email.setText(strEmail);
-                                    Picasso.get().load(strImage).into(profile_image);
-
+                                    Picasso.get().load(strImage)
+                                            .memoryPolicy(MemoryPolicy.NO_CACHE)
+                                            .networkPolicy(NetworkPolicy.NO_CACHE)
+                                            .into(profile_image);
                                 }
 
                             }
@@ -182,6 +192,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                 name.setFocusableInTouchMode(true);
                 email.setFocusableInTouchMode(true);
+                btn_photo_upload.setVisibility(View.VISIBLE);
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(name, InputMethodManager.SHOW_IMPLICIT);
@@ -197,6 +208,8 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                 action.findItem(R.id.menu_edit).setVisible(true);
                 action.findItem(R.id.menu_save).setVisible(false);
+
+                btn_photo_upload.setVisibility(View.GONE);
 
                 name.setFocusableInTouchMode(false);
                 email.setFocusableInTouchMode(false);
