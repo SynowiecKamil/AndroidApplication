@@ -12,7 +12,6 @@
 
     <ImageView
         android:id="@+id/logo"
-
         android:layout_marginBottom="30dp"
         android:layout_width="match_parent"
         android:layout_height="100dp" />
@@ -90,11 +89,10 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="275dp"
-        android:layout_height="57dp"
-        android:layout_alignParentTop="true"
+        android:layout_width="352dp"
+        android:layout_height="125dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="89dp"
+        android:gravity="center"
         android:text="Logowanie pacjenta"
         android:textSize="24sp" />
 
