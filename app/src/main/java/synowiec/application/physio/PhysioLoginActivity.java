@@ -1,5 +1,6 @@
 package synowiec.application.physio;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,10 +27,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.internal.Util;
 import synowiec.application.MainActivity;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
+import synowiec.application.helpers.Utils;
+import synowiec.application.patient.PatientDashboardActivity;
 import synowiec.application.patient.PatientLoginActivity;
+import synowiec.application.patient.PatientRegisterActivity;
 
 public class PhysioLoginActivity extends AppCompatActivity {
 
@@ -38,6 +43,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
     private Button btn_login, btn_back;
     private TextView link_regist;
     private ProgressBar loading;
+    private Context c;
     private static String URL_LOGIN = "http://192.168.21.17/android_application/loginPhysio.php";
     SessionManager sessionManager;
 
@@ -45,15 +51,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physio_login);
-
-        sessionManager = new SessionManager(this);
-
-        loading = findViewById(R.id.loading);
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
-        btn_login = findViewById(R.id.btn_login);
-        btn_back = findViewById(R.id.btn_back);
-        link_regist = findViewById(R.id.link_regist);
+        initializeWidgets();
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,14 +70,14 @@ public class PhysioLoginActivity extends AppCompatActivity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PhysioLoginActivity.this, MainActivity.class));
+                Utils.openActivity(c, PatientDashboardActivity.class);
             }
         });
 
         link_regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PhysioLoginActivity.this, PhysioRegisterActivity.class));
+                Utils.openActivity(c, PatientRegisterActivity.class);
             }
         });
 
@@ -157,6 +155,16 @@ public class PhysioLoginActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
 
+    }
+    private void initializeWidgets(){
+        sessionManager = new SessionManager(this);
+        c = PhysioLoginActivity.this;
+        loading = findViewById(R.id.loading);
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.password);
+        btn_login = findViewById(R.id.btn_login);
+        btn_back = findViewById(R.id.btn_back);
+        link_regist = findViewById(R.id.link_regist);
     }
 }
 
