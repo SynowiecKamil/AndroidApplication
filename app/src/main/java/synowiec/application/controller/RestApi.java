@@ -14,11 +14,18 @@ public interface RestApi {
 
 
     @FormUrlEncoded
-    @POST("physiotherapist.php")
-    Call<ResponseModel> insertData(@Field("action") String action,
+    @POST("patient.php")
+    Call<ResponseModel> insertPatientData(@Field("action") String action,
                                    @Field("name") String name,
                                    @Field("email") String email,
                                    @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("physiotherapist.php")
+    Call<ResponseModel> insertPhysioData(@Field("action") String action,
+                                          @Field("name") String name,
+                                          @Field("email") String email,
+                                          @Field("password") String password);
 
     @FormUrlEncoded
     @POST("physiotherapist.php")

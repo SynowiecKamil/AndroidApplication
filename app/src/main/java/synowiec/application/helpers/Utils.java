@@ -6,12 +6,17 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import synowiec.application.R;
 import synowiec.application.model.Physiotherapist;
 
 public class Utils {
@@ -38,6 +43,17 @@ public class Utils {
      */
     public static void show(Context c, String message){
         Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showInfoDialog(final AppCompatActivity activity, String title,
+                                      String message) {
+        new LovelyStandardDialog(activity, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+   //             .setTopColorRes(R.color.indigo)
+  //              .setButtonsColorRes(R.color.darkDeepOrange)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", v -> {})
+                .show();
     }
 
     /**
