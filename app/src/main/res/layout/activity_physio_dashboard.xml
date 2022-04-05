@@ -24,6 +24,12 @@
         android:layout_centerHorizontal="true"
         android:text="Edytuj zdjęcie profilowe" />
 
+    <ProgressBar
+        android:id="@+id/mProgressBarSave"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="52dp" />
+
     <LinearLayout
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
@@ -88,5 +94,18 @@
         android:text="Wyloguj"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_delete_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="92dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Usuń konto"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

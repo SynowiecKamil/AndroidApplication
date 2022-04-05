@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +43,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
+import synowiec.application.controller.ResponseModel;
+import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.Utils;
+
+import static synowiec.application.helpers.Utils.hideProgressBar;
+import static synowiec.application.helpers.Utils.show;
+import static synowiec.application.helpers.Utils.showInfoDialog;
+import static synowiec.application.helpers.Utils.showProgressBar;
 
 
 public class PhysioDashboardActivity extends AppCompatActivity{
@@ -50,15 +62,17 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
     private static final String TAG = PhysioDashboardActivity.class.getSimpleName(); //getting the info
     private TextView name, email;
-    private Button btn_logout, btn_photo_upload;
+    private Button btn_logout, btn_photo_upload, btn_delete_user;
     SessionManager sessionManager;
     String getId;
+    private ProgressBar mProgressBar;
     private static String URL_READ = "http://192.168.21.17/android_application/readDetailPhysio.php";
     private static String URL_EDIT = "http://192.168.21.17/android_application/editDetailPhysio.php";
     private static String URL_UPLOAD = "http://192.168.21.17/android_application/uploadPhysio.php";
     private Menu action;
     private Bitmap bitmap;
     CircleImageView profile_image;
+    private Context c = PhysioDashboardActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +91,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         btn_logout = findViewById(R.id.btn_logout);
         btn_photo_upload = findViewById(R.id.btn_photo);
         btn_photo_upload.setVisibility(View.GONE);
+        btn_delete_user = findViewById(R.id.btn_delete_user);
         profile_image = findViewById(R.id.profile_image);
 
         HashMap<String, String> user = sessionManager.getUserDetail();
@@ -93,6 +108,20 @@ public class PhysioDashboardActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 chooseFile();
+            }
+        });
+
+        btn_delete_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LovelyStandardDialog(c, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                 //       .setTopColorRes(R.color.indigo)
+                 //       .setButtonsColorRes(R.color.darkDeepOrange)
+                        .setTitle("Ostrzeżenie")
+                        .setMessage("Czy na pewno chcesz usunąć konto? Zmiany będą nieodwracalne.")
+                        .setPositiveButton("NIE", x -> {})
+                        .setNegativeButton("TAK", x -> deleteUser())
+                        .show();
             }
         });
 
@@ -368,5 +397,46 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         String encodedImage = Base64.encodeToString(imageByteArray, Base64.DEFAULT);
 
         return encodedImage;
+    }
+
+    private void deleteUser() {
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> del = api.removePhysio("DELETE", getId);
+
+        showProgressBar(mProgressBar);
+        del.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+
+                Log.d("RETROFIT", "DELETE RESPONSE: " + response.body());
+                hideProgressBar(mProgressBar);
+                String myResponseCode = response.body().getCode();
+
+                if (myResponseCode.equalsIgnoreCase("1")) {
+                    System.out.println(response.body().getMessage());
+                    show(c, "Pomyślnie usunięto użytkownika");
+                    sessionManager.logout("physio");
+                    finish();
+                } else if (myResponseCode.equalsIgnoreCase("2")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
+                            "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL"+
+                                    " \n 2. WE ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+
+                                    myResponseCode+ " \n 3. Most probably the problem is with your PHP Code.");
+                }else if (myResponseCode.equalsIgnoreCase("3")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "NO MYSQL CONNECTION",
+                            " Your PHP Code is unable to connect to mysql database. Make sure you have supplied correct database credentials.");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                hideProgressBar(mProgressBar);
+                Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                showInfoDialog(PhysioDashboardActivity.this, "FAILURE THROWN", "ERROR during DELETE attempt. Message: " + t.getMessage());
+            }
+        });
     }
 }

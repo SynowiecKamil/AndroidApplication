@@ -48,6 +48,10 @@ public interface RestApi {
                                @Field("limit") String limit);
 
     @FormUrlEncoded
+    @POST("patient.php")
+    Call<ResponseModel> removePatient(@Field("action") String action, @Field("id") String id);
+
+    @FormUrlEncoded
     @POST("physiotherapist.php")
-    Call<ResponseModel> remove(@Field("action") String action, @Field("id") String id);
+    Call<ResponseModel> removePhysio(@Field("action") String action, @Field("id") String id);
 }
