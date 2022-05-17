@@ -59,17 +59,15 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 
 public class PatientDashboardActivity extends AppCompatActivity {
 
-    private static final String TAG = PatientDashboardActivity.class.getSimpleName(); //getting the info
     private TextView name, email;
-    private Button btn_logout, btn_photo_upload, btn_delete_user;
+    private String id = null;
+    private Button btn_logout, btn_photo_upload, btn_search_physio, btn_delete_user;
+    private HashMap<String, String> user;
+    private ProgressBar mProgressBar;
     SessionManager sessionManager;
     String getId;
-    private ProgressBar mProgressBar;
-    private static String URL_READ = "http://192.168.21.17/android_application/readDetailPatient.php";
-    private static String URL_EDIT = "http://192.168.21.17/android_application/editDetailPatient.php";
-    private static String URL_UPLOAD = "http://192.168.21.17/android_application/uploadPatient.php";
     private Menu action;
-    private Bitmap bitmap;
+    private Bitmap bitmap = null;
     CircleImageView profile_image;
     private Context c = PatientDashboardActivity.this;
 
@@ -78,28 +76,8 @@ public class PatientDashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_dashboard);
-
-        sessionManager = new SessionManager(this);
-        sessionManager.checkLogin("patient");
-
-        mProgressBar = findViewById(R.id.mProgressBarSave);
-        mProgressBar.setIndeterminate(true);
-        mProgressBar.setVisibility(View.GONE);
-
-        name = findViewById(R.id.name);
-        name.setFocusableInTouchMode(false);
-
-        email = findViewById(R.id.email);
-        email.setFocusableInTouchMode(false);
-
-        btn_logout = findViewById(R.id.btn_logout);
-        btn_photo_upload = findViewById(R.id.btn_photo);
-        btn_delete_user = findViewById(R.id.btn_delete_user);
-        btn_photo_upload.setVisibility(View.GONE);
-        profile_image = findViewById(R.id.profile_image);
-
-        HashMap<String, String> user = sessionManager.getUserDetail();
-        getId = user.get(sessionManager.ID);
+        initializeWidgets();
+        showData(user);
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +90,13 @@ public class PatientDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chooseFile();
+            }
+        });
+
+        btn_search_physio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+             //   openActivity(PatientDashboardActivity.this, PatientSearchActivity.class);
             }
         });
 
@@ -130,81 +115,15 @@ public class PatientDashboardActivity extends AppCompatActivity {
         });
 
     }
-
-    //getUserDetail
-    private void getUserDetail(){
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
-        profile_image = findViewById(R.id.profile_image);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_READ,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        Log.i(TAG, response.toString());
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-                            JSONArray jsonArray = jsonObject.getJSONArray("read");
-
-                            if (success.equals("1")){
-
-                                for (int i =0; i < jsonArray.length(); i++){
-
-                                    JSONObject object = jsonArray.getJSONObject(i);
-
-                                    String strName = object.getString("name").trim();
-                                    String strEmail = object.getString("email").trim();
-                                    String strImage = object.getString("image").trim();
-
-                                    name.setText(strName);
-                                    email.setText(strEmail);
-                                    Picasso.get().load(strImage)
-                                            .memoryPolicy(MemoryPolicy.NO_CACHE)
-                                            .networkPolicy(NetworkPolicy.NO_CACHE)
-                                            .into(profile_image);
-
-                                }
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PatientDashboardActivity.this, "Błąd odczytu danych "+e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PatientDashboardActivity.this, "Błąd odczytu danych "+error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String > params = new HashMap<>();
-                params.put("id", getId);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
+    @Override
+    public void onBackPressed()
+    {
+        sessionManager.logout("patient");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getUserDetail();
     }
 
     @Override
@@ -238,7 +157,8 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
             case R.id.menu_save:
 
-                SaveEditDetail();
+                updateData();
+                if(bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
 
                 action.findItem(R.id.menu_edit).setVisible(true);
                 action.findItem(R.id.menu_save).setVisible(false);
@@ -258,61 +178,66 @@ public class PatientDashboardActivity extends AppCompatActivity {
         }
     }
 
-    //save
-    private void SaveEditDetail() {
+    private void showData(HashMap<String, String> user){
+        if(user != null){
+            name.setText(user.get(sessionManager.NAME));
+            email.setText(user.get(sessionManager.EMAIL));
+            Picasso.get().load(user.get(sessionManager.PHOTO))
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(profile_image);
+            System.out.println("Znaleziono uzytkownika");
+        }else{
+            System.out.println("Brak uzytkownika");
+        }
+    }
 
-        final String name = this.name.getText().toString().trim();
-        final String email = this.email.getText().toString().trim();
-        final String id = getId;
+    private void updateData() {
+        String sName, sEmail, sId;
+        sName = name.getText().toString();
+        sEmail = email.getText().toString();
+        sId = getId;
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Saving...");
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_EDIT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-
-                            if (success.equals("1")){
-                                Toast.makeText(PatientDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
-                                sessionManager.createSession(name, email, id);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PatientDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PatientDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
+        showProgressBar(mProgressBar);
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> update = api.updatePatient("UPDATE", sId, sName, sEmail);
+        update.enqueue(new Callback<ResponseModel>() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("name", name);
-                params.put("email", email);
-                params.put("id", id);
-                return params;
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PatientDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                Log.d("RETROFIT", "Response: " + response.body().getPatients());
+
+                hideProgressBar(mProgressBar);
+                String myResponseCode = response.body().getCode();
+
+                if (myResponseCode.equalsIgnoreCase("1")) {
+                    show(c, "Pomyślnie zaaktualizowano dane ");
+                    System.out.println(response.body().getMessage());
+                    //      receiveFromDatabase();
+
+                } else if (myResponseCode.equalsIgnoreCase("2")) {
+                    showInfoDialog(PatientDashboardActivity.this, "UNSUCCESSFUL",
+                            "Good Response From PHP,"+
+                                    "WE ATTEMPTED UPDATING DATA BUT ENCOUNTERED ResponseCode: "+myResponseCode+
+                                    " \n 3. Most probably the problem is with your PHP Code.");
+                } else if (myResponseCode.equalsIgnoreCase("3")) {
+                    showInfoDialog(PatientDashboardActivity.this, "NO MYSQL CONNECTION",
+                            " Your PHP Code"+
+                                    " is unable to connect to mysql database. Make sure you have supplied correct"+
+                                    " database credentials.");
+                }
             }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR THROWN DURING UPDATE: " + t.getMessage());
+                hideProgressBar(mProgressBar);
+                showInfoDialog(PatientDashboardActivity.this, "FAILURE THROWN", "ERROR DURING UPDATE.Here"+
+                        " is the Error: " + t.getMessage());
+            }
+        });
     }
 
     private void chooseFile(){
@@ -330,65 +255,35 @@ public class PatientDashboardActivity extends AppCompatActivity {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 profile_image.setImageBitmap(bitmap);
-
+                profile_image.clearFocus();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            UploadPicture(getId, getStringImage(bitmap));
-
         }
     }
 
-    private void UploadPicture(final String id, final String photo) {
+    private void UploadPictureRetrofit(final String id, final String photo){
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> upl = api.uploadImagePatient("UPLOAD_IMAGE", id, photo);
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Wgrywanie...");
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_UPLOAD,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        Log.i(TAG, response.toString());
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-
-                            if (success.equals("1")){
-                                Toast.makeText(PatientDashboardActivity.this, "Pomyślnie!", Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PatientDashboardActivity.this, "Spróbuj ponownie!"+e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PatientDashboardActivity.this, "Spróbuj ponownie" + error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
+        upl.enqueue(new Callback<ResponseModel>() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", id);
-                params.put("photo", photo);
-
-                return params;
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PatientDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                Log.d("RETROFIT", "UPLOAD IMAGE RESPONSE: " + response.body().toString());
+                System.out.println(response.body().getMessage());
+                show(c, "Pomyślnie zmieniono zdjęcie użytkownika");
             }
-        };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-        getUserDetail();
-
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR THROWN DURING UPLOAD: " + t.getMessage());
+                hideProgressBar(mProgressBar);
+            }
+        });
     }
 
     public String getStringImage(Bitmap bitmap){
@@ -441,5 +336,31 @@ public class PatientDashboardActivity extends AppCompatActivity {
                 showInfoDialog(PatientDashboardActivity.this, "FAILURE THROWN", "ERROR during DELETE attempt. Message: " + t.getMessage());
             }
         });
+    }
+
+    public void initializeWidgets(){
+        sessionManager = new SessionManager(this);
+        sessionManager.checkLogin("pacjent");
+
+        mProgressBar = findViewById(R.id.mProgressBarSave);
+        mProgressBar.setIndeterminate(true);
+        mProgressBar.setVisibility(View.GONE);
+
+        name = findViewById(R.id.name);
+        name.setFocusableInTouchMode(false);
+        email = findViewById(R.id.email);
+        email.setFocusableInTouchMode(false);
+
+        btn_logout = findViewById(R.id.btn_logout);
+
+        btn_photo_upload = findViewById(R.id.btn_photo);
+        btn_photo_upload.setVisibility(View.GONE);
+
+        profile_image = findViewById(R.id.profile_image);
+        btn_search_physio = findViewById(R.id.btn_search_physio);
+        btn_delete_user = findViewById(R.id.btn_delete_user);
+
+        user = sessionManager.getUserDetail();
+        getId = user.get(sessionManager.ID);
     }
 }

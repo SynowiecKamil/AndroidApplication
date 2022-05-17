@@ -96,6 +96,20 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:id="@+id/btn_search_physio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="158dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Znajdź fizjoterapeute"
+        android:textColor="@android:color/white" />
+
+    <Button
         android:id="@+id/btn_delete_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

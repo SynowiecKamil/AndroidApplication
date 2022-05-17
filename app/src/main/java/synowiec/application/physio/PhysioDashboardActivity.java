@@ -59,16 +59,12 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 
 public class PhysioDashboardActivity extends AppCompatActivity{
 
-
-    private static final String TAG = PhysioDashboardActivity.class.getSimpleName(); //getting the info
     private TextView name, email;
+    private String id = null, getId;
     private Button btn_logout, btn_photo_upload, btn_delete_user;
+    private HashMap<String, String> user;
     SessionManager sessionManager;
-    String getId;
     private ProgressBar mProgressBar;
-    private static String URL_READ = "http://192.168.21.17/android_application/readDetailPhysio.php";
-    private static String URL_EDIT = "http://192.168.21.17/android_application/editDetailPhysio.php";
-    private static String URL_UPLOAD = "http://192.168.21.17/android_application/uploadPhysio.php";
     private Menu action;
     private Bitmap bitmap;
     CircleImageView profile_image;
@@ -78,37 +74,17 @@ public class PhysioDashboardActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physio_dashboard);
-
-        sessionManager = new SessionManager(this);
-        sessionManager.checkLogin("physio");
-
-        name = findViewById(R.id.name);
-        email = findViewById(R.id.email);
-
-        name.setFocusableInTouchMode(false);
-        email.setFocusableInTouchMode(false);
-
-        btn_logout = findViewById(R.id.btn_logout);
-        btn_photo_upload = findViewById(R.id.btn_photo);
-        btn_photo_upload.setVisibility(View.GONE);
-        btn_delete_user = findViewById(R.id.btn_delete_user);
-        profile_image = findViewById(R.id.profile_image);
-
-        HashMap<String, String> user = sessionManager.getUserDetail();
-        getId = user.get(sessionManager.ID);
+        initializeWidgets();
+        showData(user);
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                sessionManager.logout("physio");
-            }
+            public void onClick(View v) { sessionManager.logout("physio"); }
         });
 
         btn_photo_upload.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                chooseFile();
-            }
+            public void onClick(View v) { chooseFile(); }
         });
 
         btn_delete_user.setOnClickListener(new View.OnClickListener() {
@@ -124,83 +100,12 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                         .show();
             }
         });
-
     }
-
-    //getUserDetail
-    private void getUserDetail(){
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
-        profile_image = findViewById(R.id.profile_image);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_READ,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        Log.i(TAG, response.toString());
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-                            JSONArray jsonArray = jsonObject.getJSONArray("read");
-
-                            if (success.equals("1")){
-
-                                for (int i =0; i < jsonArray.length(); i++){
-
-                                    JSONObject object = jsonArray.getJSONObject(i);
-
-                                    String strName = object.getString("name").trim();
-                                    String strEmail = object.getString("email").trim();
-                                    String strImage = object.getString("image").trim();
-
-                                    name.setText(strName);
-                                    email.setText(strEmail);
-                                    Picasso.get().load(strImage)
-                                            .memoryPolicy(MemoryPolicy.NO_CACHE)
-                                            .networkPolicy(NetworkPolicy.NO_CACHE)
-                                            .into(profile_image);
-                                }
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PhysioDashboardActivity.this, "Błąd ładowania danych "+e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PhysioDashboardActivity.this, "Błąd ładowania danych "+error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String > params = new HashMap<>();
-                params.put("id", getId);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
-    }
+    @Override
+    public void onBackPressed() { sessionManager.logout("physiotherapist"); }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        getUserDetail();
-    }
+    protected void onResume() { super.onResume(); }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -233,17 +138,17 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
             case R.id.menu_save:
 
-                SaveEditDetail();
+                updateData();
+                if(bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
 
                 action.findItem(R.id.menu_edit).setVisible(true);
                 action.findItem(R.id.menu_save).setVisible(false);
-
-                btn_photo_upload.setVisibility(View.GONE);
 
                 name.setFocusableInTouchMode(false);
                 email.setFocusableInTouchMode(false);
                 name.setFocusable(false);
                 email.setFocusable(false);
+                btn_photo_upload.setVisibility(View.GONE);
 
                 return true;
 
@@ -254,63 +159,128 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         }
     }
 
-    //save
-    private void SaveEditDetail() {
-
-        final String name = this.name.getText().toString().trim();
-        final String email = this.email.getText().toString().trim();
-        final String id = getId;
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Saving...");
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_EDIT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-
-                            if (success.equals("1")){
-                                Toast.makeText(PhysioDashboardActivity.this, "Zapisano pomyślnie!", Toast.LENGTH_SHORT).show();
-                                sessionManager.createSession(name, email, id);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PhysioDashboardActivity.this, "Błąd "+ e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PhysioDashboardActivity.this, "Błąd "+ error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("name", name);
-                params.put("email", email);
-                params.put("id", id);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
+    //RECEIVE DATA FROM SESSION MANAGER AND FILL
+    private void showData(HashMap<String, String> user){
+        if(user != null){
+            name.setText(user.get(sessionManager.NAME));
+            email.setText(user.get(sessionManager.EMAIL));
+            Picasso.get().load(user.get(sessionManager.PHOTO))
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(profile_image);
+            System.out.println("Znaleziono uzytkownika");
+        }else{
+            System.out.println("Brak uzytkownika");
+        }
     }
 
+    //SELECT * FROM DB
+    private void receiveFromDatabase(){
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<String> login = api.getPhysioData("READ", getId);
+
+        login.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+
+                if(response == null || response.body() == null ){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+
+                Log.d("RETROFIT", "response : " + response.body().toString());
+                String myResponse = response.body().toString();
+
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(myResponse);
+                        JSONArray jsonArray = jsonObject.getJSONArray("result");
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String name = object.getString("name").trim();
+                            String email = object.getString("email").trim();
+                            String id = object.getString("id").trim();
+                            String photo = object.getString("photo").trim();
+
+                            //   receivedPhysio = new Physiotherapist(id, name, email, photo);
+                            sessionManager.createSession(id, name, email, photo);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(PhysioDashboardActivity.this, "Bląd!", Toast.LENGTH_SHORT).show();
+                    }
+                } else if (!response.isSuccessful()) {
+                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
+                            "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
+                                    " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
+                                    " \n 3. Most probably the problem is with your PHP Code.");
+                }
+                //       hideProgressBar(mProgressBar);
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                //     hideProgressBar(mProgressBar);
+                showInfoDialog(PhysioDashboardActivity.this, "FAILURE",
+                        "FAILURE THROWN DURING INSERT."+
+                                " ERROR Message: " + t.getMessage());
+            }
+        });
+    }
+
+    //UPDATE NAME, EMAIL IN DB
+    private void updateData() {
+        String sName, sEmail, sId;
+        sName = name.getText().toString();
+        sEmail = email.getText().toString();
+        sId = getId;
+
+        showProgressBar(mProgressBar);
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> update = api.updatePhysio("UPDATE", sId, sName, sEmail);
+        update.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                Log.d("RETROFIT", "Response: " + response.body().getPhysiotherapists());
+
+                hideProgressBar(mProgressBar);
+                String myResponseCode = response.body().getCode();
+
+                if (myResponseCode.equalsIgnoreCase("1")) {
+                    show(c, "Pomyślnie zaaktualizowano dane ");
+                    System.out.println(response.body().getMessage());
+
+                } else if (myResponseCode.equalsIgnoreCase("2")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
+                            "Good Response From PHP,"+
+                                    "WE ATTEMPTED UPDATING DATA BUT ENCOUNTERED ResponseCode: "+myResponseCode+
+                                    " \n 3. Most probably the problem is with your PHP Code.");
+                } else if (myResponseCode.equalsIgnoreCase("3")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "NO MYSQL CONNECTION",
+                            " Your PHP Code"+
+                                    " is unable to connect to mysql database. Make sure you have supplied correct"+
+                                    " database credentials.");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR THROWN DURING UPDATE: " + t.getMessage());
+                hideProgressBar(mProgressBar);
+                showInfoDialog(PhysioDashboardActivity.this, "FAILURE THROWN", "ERROR DURING UPDATE.Here"+
+                        " is the Error: " + t.getMessage());
+            }
+        });
+    }
+
+    //CHOOSE FILE FOR PHOTO UPDATE
     private void chooseFile(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -324,67 +294,37 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
-
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 profile_image.setImageBitmap(bitmap);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            UploadPicture(getId, getStringImage(bitmap));
-
         }
     }
 
-    private void UploadPicture(final String id, final String photo) {
+    //UPDATE PHOTO IN DB
+    private void UploadPictureRetrofit(final String id, final String photo){
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> upl = api.uploadImagePhysio("UPLOAD_IMAGE", id, photo);
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Wgrywanie...");
-        progressDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_UPLOAD,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        Log.i(TAG, response.toString());
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-
-                            if (success.equals("1")){
-                                Toast.makeText(PhysioDashboardActivity.this, "Pomyślnie!", Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            progressDialog.dismiss();
-                            Toast.makeText(PhysioDashboardActivity.this, "Spróbuj ponownie!"+e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(PhysioDashboardActivity.this, "Spróbuj ponownie!" + error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
+        upl.enqueue(new Callback<ResponseModel>() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", id);
-                params.put("photo", photo);
-
-                return params;
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                Log.d("RETROFIT", "UPLOAD IMAGE RESPONSE: " + response.body().toString());
+                System.out.println(response.body().getMessage());
+                show(c, "Pomyślnie zmieniono zdjęcie użytkownika");
             }
-        };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR THROWN DURING UPLOAD: " + t.getMessage());
+                hideProgressBar(mProgressBar);
+            }
+        });
 
     }
 
@@ -398,7 +338,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
         return encodedImage;
     }
-
+    // DELETE USER IN DB
     private void deleteUser() {
         RestApi api = Utils.getClient().create(RestApi.class);
         Call<ResponseModel> del = api.removePhysio("DELETE", getId);
@@ -438,5 +378,30 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                 showInfoDialog(PhysioDashboardActivity.this, "FAILURE THROWN", "ERROR during DELETE attempt. Message: " + t.getMessage());
             }
         });
+    }
+
+    public void initializeWidgets(){
+        sessionManager = new SessionManager(this);
+        sessionManager.checkLogin("fizjoterapeuta");
+
+        mProgressBar = findViewById(R.id.mProgressBarSave);
+        mProgressBar.setIndeterminate(true);
+        mProgressBar.setVisibility(View.GONE);
+
+        name = findViewById(R.id.name);
+        name.setFocusableInTouchMode(false);
+        email = findViewById(R.id.email);
+        email.setFocusableInTouchMode(false);
+        btn_logout = findViewById(R.id.btn_logout);
+
+        btn_photo_upload = findViewById(R.id.btn_photo);
+        btn_photo_upload.setVisibility(View.GONE);
+
+        profile_image = findViewById(R.id.profile_image);
+        btn_delete_user = findViewById(R.id.btn_delete_user);
+
+
+        user = sessionManager.getUserDetail();
+        getId = user.get(sessionManager.ID);
     }
 }
