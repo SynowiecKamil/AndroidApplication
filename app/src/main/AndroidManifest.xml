@@ -23,6 +23,10 @@
         </activity>
         <activity android:name=".patient.PatientDashboardActivity">
         </activity>
+        <activity android:name=".patient.PatientSearchActivity">
+        </activity>
+        <activity android:name=".patient.PhysioDetailActivity">
+        </activity>
         <activity android:name=".physio.PhysioDashboardActivity">
     </activity>
         <activity android:name=".patient.PatientLoginActivity">

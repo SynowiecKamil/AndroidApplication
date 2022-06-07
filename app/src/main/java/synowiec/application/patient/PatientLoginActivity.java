@@ -147,8 +147,8 @@ public class PatientLoginActivity extends AppCompatActivity {
                 }
             });
         } else {
-            email.setError("Please insert email");
-            password.setError("Please insert password");
+            email.setError("Proszę wprowadzić email");
+            password.setError("Proszę wprowadzić hasło");
         }
     }
 

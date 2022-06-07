@@ -249,7 +249,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                     showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
-                Log.d("RETROFIT", "Response: " + response.body().getPhysiotherapists());
+                Log.d("RETROFIT", "Response: " + response.body().getResult());
 
                 hideProgressBar(mProgressBar);
                 String myResponseCode = response.body().getCode();

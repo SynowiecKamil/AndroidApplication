@@ -3,6 +3,7 @@ package synowiec.application.physio;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,23 +29,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.internal.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
 import synowiec.application.MainActivity;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
+import synowiec.application.controller.RestApi;
 import synowiec.application.helpers.Utils;
 import synowiec.application.patient.PatientDashboardActivity;
 import synowiec.application.patient.PatientLoginActivity;
 import synowiec.application.patient.PatientRegisterActivity;
 
+import static synowiec.application.helpers.Utils.showInfoDialog;
+
 public class PhysioLoginActivity extends AppCompatActivity {
 
-    private EditText email;
-    private EditText password;
+    private EditText email, password;
     private Button btn_login, btn_back;
     private TextView link_regist;
     private ProgressBar loading;
     private Context c;
-    private static String URL_LOGIN = "http://192.168.21.17/android_application/loginPhysio.php";
     SessionManager sessionManager;
 
     @Override
@@ -55,107 +59,181 @@ public class PhysioLoginActivity extends AppCompatActivity {
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String mEmail = email.getText().toString().trim();
-                String mPass = password.getText().toString().trim();
-
-                if (!mEmail.isEmpty() || !mPass.isEmpty()) {
-                    Login(mEmail, mPass);
-                } else {
-                    email.setError("Proszę wpisać email");
-                    password.setError("Proszę wpisać hasło");
-                }
-            }
+            public void onClick(View v) {loginUser();}
         });
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.openActivity(c, PatientDashboardActivity.class);
+                Utils.openActivity(c, MainActivity.class);
             }
         });
 
         link_regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.openActivity(c, PatientRegisterActivity.class);
+                Utils.openActivity(c, PhysioRegisterActivity.class);
             }
         });
 
     }
 
-    private void Login(final String sEmail, final String sPassword) {
+//    private void Login(final String sEmail, final String sPassword) {
+//
+//        loading.setVisibility(View.VISIBLE);
+//        btn_login.setVisibility(View.GONE);
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_LOGIN,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            String success = jsonObject.getString("success");
+//                            JSONArray jsonArray = jsonObject.getJSONArray("login");
+//
+//                            if (success.equals("1")) {
+//
+//                                for (int i = 0; i < jsonArray.length(); i++) {
+//
+//                                    JSONObject object = jsonArray.getJSONObject(i);
+//
+//                                    String name = object.getString("name").trim();
+//                                    String email = object.getString("email").trim();
+//                                    String id = object.getString("id").trim();
+//
+//                                    sessionManager.createSession(name, email, id);
+//
+//                                    Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
+//                                    intent.putExtra("name", name);
+//                                    intent.putExtra("email", email);
+//                                    startActivity(intent);
+//                                    finish();
+//
+//                                    loading.setVisibility(View.GONE);
+//
+//
+//                                }
+//
+//                            }else if(success.equals("0")){
+//                                loading.setVisibility(View.GONE);
+//                                btn_login.setVisibility(View.VISIBLE);
+//                                Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            loading.setVisibility(View.GONE);
+//                            btn_login.setVisibility(View.VISIBLE);
+//                            Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędny email " +e.toString(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        loading.setVisibility(View.GONE);
+//                        btn_login.setVisibility(View.VISIBLE);
+//                        Toast.makeText(PhysioLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//        {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("email", sEmail);
+//                params.put("password", sPassword);
+//                return params;
+//            }
+//        };
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        requestQueue.add(stringRequest);
+//
+//    }
 
+    private void loginUser(){
         loading.setVisibility(View.VISIBLE);
-        btn_login.setVisibility(View.GONE);
+        String sEmail, sPassword;
+        sEmail = email.getText().toString().trim();
+        sPassword = password.getText().toString().trim();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_LOGIN,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        if (!sEmail.isEmpty() || !sPassword.isEmpty()) {
+
+            RestApi api = Utils.getClient().create(RestApi.class);
+            Call<String> login = api.getPhysioLogin("LOGIN", sEmail, sPassword);
+
+            //    Utils.showProgressBar(mProgressBar);
+
+            login.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+
+                    if(response == null || response.body() == null ){
+                        showInfoDialog(PhysioLoginActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                        return;
+                    }
+
+                    Log.d("RETROFIT", "response : " + response.body().toString());
+                    String myResponse = response.body().toString();
+
+                    if (response.isSuccessful() && response.body() != null) {
                         try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success");
-                            JSONArray jsonArray = jsonObject.getJSONArray("login");
+                            JSONObject jsonObject = new JSONObject(myResponse);
+                            JSONArray jsonArray = jsonObject.getJSONArray("result");
 
-                            if (success.equals("1")) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
 
-                                for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject object = jsonArray.getJSONObject(i);
 
-                                    JSONObject object = jsonArray.getJSONObject(i);
-
-                                    String name = object.getString("name").trim();
-                                    String email = object.getString("email").trim();
-                                    String id = object.getString("id").trim();
-
-                                    sessionManager.createSession(name, email, id);
-
-                                    Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
-                                    intent.putExtra("name", name);
-                                    intent.putExtra("email", email);
-                                    startActivity(intent);
-                                    finish();
-
-                                    loading.setVisibility(View.GONE);
+                                String name = object.getString("name").trim();
+                                String email = object.getString("email").trim();
+                                String id = object.getString("id").trim();
+                                String photo = object.getString("photo").trim();
 
 
-                                }
+                                sessionManager.createSession(id, name, email, photo);
+                                Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
+                                intent.putExtra("name", name);
+                                intent.putExtra("email", email);
+                                intent.putExtra("photo", photo);
+                                startActivity(intent);
+                                finish();
 
-                            }else if(success.equals("0")){
                                 loading.setVisibility(View.GONE);
-                                btn_login.setVisibility(View.VISIBLE);
-                                Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędne hasło ", Toast.LENGTH_SHORT).show();
+
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             loading.setVisibility(View.GONE);
                             btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(PhysioLoginActivity.this, "Błąd logowania, błędny email " +e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhysioLoginActivity.this, "Bląd! Błędne dane logowania ", Toast.LENGTH_SHORT).show();
                         }
+                    } else if (!response.isSuccessful()) {
+                        showInfoDialog(PhysioLoginActivity.this, "UNSUCCESSFUL",
+                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
+                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
+                                        " \n 3. Most probably the problem is with your PHP Code.");
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.setVisibility(View.GONE);
-                        btn_login.setVisibility(View.VISIBLE);
-                        Toast.makeText(PhysioLoginActivity.this, "Błąd logowania " +error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("email", sEmail);
-                params.put("password", sPassword);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+                    //       hideProgressBar(mProgressBar);
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                    //     hideProgressBar(mProgressBar);
+                    showInfoDialog(PhysioLoginActivity.this, "FAILURE",
+                            "FAILURE THROWN DURING INSERT."+
+                                    " ERROR Message: " + t.getMessage());
+                }
+            });
+        } else {
+            email.setError("Proszę wprowadź email");
+            password.setError("Proszę wprowadź hasło");
+        }
 
     }
+
+
     private void initializeWidgets(){
         sessionManager = new SessionManager(this);
         c = PhysioLoginActivity.this;

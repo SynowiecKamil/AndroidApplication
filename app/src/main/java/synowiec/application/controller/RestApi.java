@@ -10,7 +10,7 @@ public interface RestApi {
 
 
     @GET("physiotherapist.php")
-    Call<ResponseModel> retrieve();
+    Call<ResponseModel> retrievePhysio();
 
 
     @FormUrlEncoded
@@ -76,7 +76,7 @@ public interface RestApi {
                                           @Field("photo") String photo);
 
     @FormUrlEncoded
-    @POST("physiotherapist.php")
+    @POST("patient.php")
     Call<ResponseModel> search(@Field("action") String action,
                                @Field("query") String query,
                                @Field("start") String start,

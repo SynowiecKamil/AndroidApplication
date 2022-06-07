@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import synowiec.application.helpers.Utils;
 import synowiec.application.physio.PhysioDashboardActivity;
 import synowiec.application.patient.PatientDashboardActivity;
 
@@ -28,14 +29,13 @@ public class MainActivity extends AppCompatActivity {
         btn_patient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PatientDashboardActivity.class));
-            }
+                Utils.openActivity(MainActivity.this, PatientDashboardActivity.class);            }
         });
 
         btn_physio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PhysioDashboardActivity.class));
+                Utils.openActivity(MainActivity.this, PhysioDashboardActivity.class);
             }
         });
 

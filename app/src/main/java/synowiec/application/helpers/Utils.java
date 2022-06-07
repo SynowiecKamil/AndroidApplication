@@ -16,12 +16,13 @@ import java.util.Date;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import synowiec.application.R;
 import synowiec.application.model.Physiotherapist;
 
 public class Utils {
 
-    private  static  final String base_url = "http://192.168.21.17/android_register_login/";
+    private  static  final String base_url = "http://192.168.21.17/android_application/";
     private static Retrofit retrofit;
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -32,6 +33,7 @@ public class Utils {
         if(retrofit == null){
             retrofit = new Retrofit.Builder()
                     .baseUrl(base_url)
+                    .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

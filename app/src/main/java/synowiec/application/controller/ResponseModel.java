@@ -1,39 +1,40 @@
 package synowiec.application.controller;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 import java.util.List;
 import synowiec.application.model.Physiotherapist;
 import synowiec.application.model.Patient;
 
 public class ResponseModel {
 
-    @SerializedName("resultPhysio")
-    List<Physiotherapist> physiotherapists;
-
+    /**
+     * Our ResponseModel attributes
+     */
+    @SerializedName("result")
+    private List<Physiotherapist> physiotherapists = new ArrayList();
     @SerializedName("resultPatient")
-    List<Patient> patients;
-
+    private List<Patient> patients = new ArrayList();
     @SerializedName("code")
-    private String code;
-
+    private String code = "-1";
     @SerializedName("message")
-    private String message;
+    private String message = "UNKNOWN MESSAGE";
 
-    public List<Physiotherapist> getPhysiotherapists() {
+    /**
+     * Generate Getter and Setters
+     */
+    public List<Physiotherapist> getResult() {
         return physiotherapists;
     }
 
-    public void setPhysiotherapists(List<Physiotherapist> physiotherapists) {
-        this.physiotherapists = physiotherapists;
-    }
+    public void setResult(List<Physiotherapist> physiotherapists) { this.physiotherapists = physiotherapists; }
 
-    public List<Patient> getPatients() {
+    public List<Patient> getResultPatient() {
         return patients;
     }
 
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
-    }
+    public void setResultPatient(List<Patient> patients) { this.patients = patients; }
 
     public String getCode() {
         return code;

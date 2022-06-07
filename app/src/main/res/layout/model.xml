@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="5dp"
+    android:orientation="horizontal"
+    card_view:cardCornerRadius="5dp"
+    card_view:cardElevation="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/logo"
+            />
+
+        <TextView
+            android:id="@+id/mNameTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/profile_image"
+            android:padding="5dp"
+            android:text="Imie"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#009968" />
+
+        <TextView
+            android:id="@+id/mEmailTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_below="@id/mNameTxt"
+            android:maxLines="3"
+            android:text="Email"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/mGalaxyTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Hasło"
+            android:textColor="@color/colorAccent"
+            android:textStyle="italic"
+            fontPath="fonts/RobotoCondensed-Regular.ttf"
+            tools:ignore="MissingPrefix"/>
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

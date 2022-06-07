@@ -53,6 +53,7 @@ import synowiec.application.helpers.Utils;
 import synowiec.application.physio.PhysioDashboardActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
+import static synowiec.application.helpers.Utils.openActivity;
 import static synowiec.application.helpers.Utils.show;
 import static synowiec.application.helpers.Utils.showInfoDialog;
 import static synowiec.application.helpers.Utils.showProgressBar;
@@ -96,7 +97,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
         btn_search_physio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-             //   openActivity(PatientDashboardActivity.this, PatientSearchActivity.class);
+                openActivity(PatientDashboardActivity.this, PatientSearchActivity.class);
             }
         });
 
@@ -208,7 +209,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
                     showInfoDialog(PatientDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
-                Log.d("RETROFIT", "Response: " + response.body().getPatients());
+                Log.d("RETROFIT", "Response: " + response.body().getResult());
 
                 hideProgressBar(mProgressBar);
                 String myResponseCode = response.body().getCode();
@@ -340,7 +341,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
     public void initializeWidgets(){
         sessionManager = new SessionManager(this);
-        sessionManager.checkLogin("pacjent");
+        sessionManager.checkLogin("patient");
 
         mProgressBar = findViewById(R.id.mProgressBarSave);
         mProgressBar.setIndeterminate(true);
