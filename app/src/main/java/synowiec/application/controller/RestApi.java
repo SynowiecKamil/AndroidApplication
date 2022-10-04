@@ -54,7 +54,11 @@ public interface RestApi {
     Call<ResponseModel> updatePhysio(@Field("action") String action,
                                      @Field("id") String id,
                                      @Field("name") String name,
-                                     @Field("email") String email);
+                                     @Field("email") String email,
+                                     @Field("surname") String surname,
+                                     @Field("profession_number") String profession_number,
+                                     @Field("cabinet") String cabinet,
+                                     @Field("description") String description);
 
     @FormUrlEncoded
     @POST("patient.php")
@@ -81,6 +85,11 @@ public interface RestApi {
                                @Field("query") String query,
                                @Field("start") String start,
                                @Field("limit") String limit);
+
+    @FormUrlEncoded
+    @POST("patient.php")
+    Call<ResponseModel> searchByFilter(@Field("action") String action,
+                               @Field("query") String query);
 
     @FormUrlEncoded
     @POST("patient.php")

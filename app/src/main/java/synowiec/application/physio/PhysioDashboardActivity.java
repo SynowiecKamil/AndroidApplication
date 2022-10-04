@@ -59,7 +59,7 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 
 public class PhysioDashboardActivity extends AppCompatActivity{
 
-    private TextView name, email;
+    private TextView name, email, surname, cabinet, description, profession_number;
     private String id = null, getId;
     private Button btn_logout, btn_photo_upload, btn_delete_user;
     private HashMap<String, String> user;
@@ -126,6 +126,10 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                 name.setFocusableInTouchMode(true);
                 email.setFocusableInTouchMode(true);
+                surname.setFocusableInTouchMode(true);
+                profession_number.setFocusableInTouchMode(true);
+                cabinet.setFocusableInTouchMode(true);
+                description.setFocusableInTouchMode(true);
                 btn_photo_upload.setVisibility(View.VISIBLE);
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -146,8 +150,16 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
                 name.setFocusableInTouchMode(false);
                 email.setFocusableInTouchMode(false);
+                surname.setFocusableInTouchMode(false);
+                profession_number.setFocusableInTouchMode(false);
+                cabinet.setFocusableInTouchMode(false);
+                description.setFocusableInTouchMode(false);
                 name.setFocusable(false);
                 email.setFocusable(false);
+                surname.setFocusable(false);
+                profession_number.setFocusable(false);
+                cabinet.setFocusable(false);
+                description.setFocusable(false);
                 btn_photo_upload.setVisibility(View.GONE);
 
                 return true;
@@ -164,6 +176,10 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         if(user != null){
             name.setText(user.get(sessionManager.NAME));
             email.setText(user.get(sessionManager.EMAIL));
+            surname.setText(user.get(sessionManager.SURNAME));
+            profession_number.setText(user.get(sessionManager.PROFESSION_NUMBER));
+            cabinet.setText(user.get(sessionManager.CABINET));
+            description.setText(user.get(sessionManager.DESCRIPTION));
             Picasso.get().load(user.get(sessionManager.PHOTO))
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
@@ -204,9 +220,13 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                             String email = object.getString("email").trim();
                             String id = object.getString("id").trim();
                             String photo = object.getString("photo").trim();
+                            String surname = object.getString("surname").trim();
+                            String profession_number = object.getString("profession_number").trim();
+                            String cabinet = object.getString("cabinet").trim();
+                            String description = object.getString("description").trim();
 
                             //   receivedPhysio = new Physiotherapist(id, name, email, photo);
-                            sessionManager.createSession(id, name, email, photo);
+                            sessionManager.createSession(id, name, email, photo, surname, profession_number, cabinet, description);
                         }
 
                     } catch (JSONException e) {
@@ -234,14 +254,18 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
     //UPDATE NAME, EMAIL IN DB
     private void updateData() {
-        String sName, sEmail, sId;
+        String sName, sEmail, sId, sSurname, sProfessionNumber, sCabinet, sDescription;
         sName = name.getText().toString();
         sEmail = email.getText().toString();
+        sSurname = surname.getText().toString();
+        sProfessionNumber = profession_number.getText().toString();
+        sCabinet = cabinet.getText().toString();
+        sDescription = description.getText().toString();
         sId = getId;
 
         showProgressBar(mProgressBar);
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> update = api.updatePhysio("UPDATE", sId, sName, sEmail);
+        Call<ResponseModel> update = api.updatePhysio("UPDATE", sId, sName, sEmail, sSurname, sProfessionNumber, sCabinet, sDescription);
         update.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
@@ -392,6 +416,14 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         name.setFocusableInTouchMode(false);
         email = findViewById(R.id.email);
         email.setFocusableInTouchMode(false);
+        surname = findViewById(R.id.surname);
+        surname.setFocusableInTouchMode(false);
+        profession_number = findViewById(R.id.profession_number);
+        profession_number.setFocusableInTouchMode(false);
+        cabinet = findViewById(R.id.cabinet);
+        cabinet.setFocusableInTouchMode(false);
+        description = findViewById(R.id.description);
+        description.setFocusableInTouchMode(false);
         btn_logout = findViewById(R.id.btn_logout);
 
         btn_photo_upload = findViewById(R.id.btn_photo);
