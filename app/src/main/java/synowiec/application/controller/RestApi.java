@@ -1,5 +1,7 @@
 package synowiec.application.controller;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -85,6 +87,10 @@ public interface RestApi {
                                @Field("query") String query,
                                @Field("start") String start,
                                @Field("limit") String limit);
+
+    @FormUrlEncoded
+    @POST("patient.php")
+    Call<String> fillSpinner(@Field("action") String action);
 
     @FormUrlEncoded
     @POST("patient.php")

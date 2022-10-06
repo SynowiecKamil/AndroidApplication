@@ -5,6 +5,7 @@
     xmlns:myapp="http://schemas.android.com/apk/res-auto"
     tools:context=".patient.PatientSearchActivity">
 
+
     <item
         android:id="@+id/action_search"
         android:orderInCategory="1"
@@ -15,5 +16,7 @@
         android:id="@+id/action_back"
         android:title="Powrót"
         app:showAsAction="never" />
+
+
 
 </menu>

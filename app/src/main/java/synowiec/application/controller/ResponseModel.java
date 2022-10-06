@@ -16,6 +16,8 @@ public class ResponseModel {
     private List<Physiotherapist> physiotherapists = new ArrayList();
     @SerializedName("resultPatient")
     private List<Patient> patients = new ArrayList();
+    @SerializedName("resultCabinet")
+    private List<String> cabinets = new ArrayList();
     @SerializedName("code")
     private String code = "-1";
     @SerializedName("message")
@@ -50,6 +52,14 @@ public class ResponseModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public List<String> getCabinets() {
+        return cabinets;
+    }
+
+    public void setCabinets(List<String> cabinets) {
+        this.cabinets = cabinets;
     }
 
 }
