@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -63,6 +65,10 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
     private int currentPhysio, totalPhysios, scrolledOutPhysios;
     private ProgressBar mProgressBar;
     private Spinner spinnerCabinet;
+    private Button btn_showFilter, btn_filter;
+    private boolean isFiltered = false;
+    private String selectedCabinet;
+    private LinearLayout layout1, layout2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,34 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
         setupRecyclerView();
         retrieveAndFillRecyclerView("GET_PAGINATED", "", "0", "7");
         fillSpinnerCabinet();
+
+        btn_showFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isFiltered == false){
+                    layout1.setVisibility(View.VISIBLE);
+                    layout2.setVisibility(View.VISIBLE);
+                    isFiltered = true;
+                    btn_filter.setVisibility(View.VISIBLE);
+                    btn_showFilter.setText("Zresetuj i Ukryj filtry");
+                }else{
+                    layout1.setVisibility(View.GONE);
+                    layout2.setVisibility(View.GONE);
+                    isFiltered = false;
+                    retrieveAndFillRecyclerView("GET_PAGINATED_SEARCH", "", "0", "7");
+                    btn_filter.setVisibility(View.GONE);
+                    btn_showFilter.setText("Pokaż filtry");
+                }
+                }
+        });
+
+        btn_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allPagesPhysiotherapists.clear();
+                retrieveAndFillRecyclerView("FILTER_SEARCH",selectedCabinet, "0", "7");
+            }
+        });
     }
 
     /**
@@ -298,9 +332,7 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(parent.getId() == R.id.spinnerCabinet){
-            String selectedCabinet = parent.getSelectedItem().toString();
-            allPagesPhysiotherapists.clear();
-            retrieveAndFillRecyclerView("FILTER_SEARCH", selectedCabinet, "0","7");
+            selectedCabinet = parent.getSelectedItem().toString();
         }
     }
 
@@ -318,6 +350,13 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
         rv = findViewById(R.id.mRecyclerView);
         spinnerCabinet = findViewById(R.id.spinnerCabinet);
         spinnerCabinet.setOnItemSelectedListener(this);
+        btn_showFilter = findViewById(R.id.btn_showFilter);
+        btn_filter = findViewById(R.id.btn_filter);
+        btn_filter.setVisibility(View.GONE);
+        layout1 = findViewById(R.id.layout_1);
+        layout2 = findViewById(R.id.layout_2);
+        layout1.setVisibility(View.GONE);
+        layout2.setVisibility(View.GONE);
     }
 
 

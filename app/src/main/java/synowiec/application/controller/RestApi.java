@@ -95,7 +95,7 @@ public interface RestApi {
     @FormUrlEncoded
     @POST("patient.php")
     Call<ResponseModel> searchByFilter(@Field("action") String action,
-                               @Field("query") String query);
+                                        @Field("query") String query);
 
     @FormUrlEncoded
     @POST("patient.php")
