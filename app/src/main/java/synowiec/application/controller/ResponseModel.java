@@ -4,8 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import synowiec.application.model.PhysioTreatment;
 import synowiec.application.model.Physiotherapist;
 import synowiec.application.model.Patient;
+import synowiec.application.model.Treatment;
 
 public class ResponseModel {
 
@@ -14,10 +17,8 @@ public class ResponseModel {
      */
     @SerializedName("result")
     private List<Physiotherapist> physiotherapists = new ArrayList();
-    @SerializedName("resultPatient")
-    private List<Patient> patients = new ArrayList();
-    @SerializedName("resultCabinet")
-    private List<String> cabinets = new ArrayList();
+    @SerializedName("resultTreatment")
+    private List<Treatment> treatments = new ArrayList();
     @SerializedName("code")
     private String code = "-1";
     @SerializedName("message")
@@ -32,11 +33,9 @@ public class ResponseModel {
 
     public void setResult(List<Physiotherapist> physiotherapists) { this.physiotherapists = physiotherapists; }
 
-    public List<Patient> getResultPatient() {
-        return patients;
-    }
+    public List<Treatment> getTreatments() { return treatments; }
 
-    public void setResultPatient(List<Patient> patients) { this.patients = patients; }
+    public void setTreatments(List<Treatment> treatments) { this.treatments = treatments; }
 
     public String getCode() {
         return code;
@@ -54,12 +53,5 @@ public class ResponseModel {
         this.message = message;
     }
 
-    public List<String> getCabinets() {
-        return cabinets;
-    }
-
-    public void setCabinets(List<String> cabinets) {
-        this.cabinets = cabinets;
-    }
 
 }

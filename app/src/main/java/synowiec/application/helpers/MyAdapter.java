@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import synowiec.application.R;
+import synowiec.application.model.PhysioTreatment;
 import synowiec.application.model.Physiotherapist;
 import synowiec.application.patient.PhysioDetailActivity;
 

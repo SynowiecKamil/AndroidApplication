@@ -189,13 +189,20 @@ public class PhysioLoginActivity extends AppCompatActivity {
                                 String email = object.getString("email").trim();
                                 String id = object.getString("id").trim();
                                 String photo = object.getString("photo").trim();
+                                String surname = object.getString("surname").trim();
+                                String profession_number = object.getString("profession_number").trim();
+                                String cabinet = object.getString("cabinet").trim();
+                                String description = object.getString("description").trim();
 
-
-                                sessionManager.createSession(id, name, email, photo);
+                                sessionManager.createSession(id, name, email, photo, surname, profession_number, cabinet, description);
                                 Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
                                 intent.putExtra("name", name);
                                 intent.putExtra("email", email);
                                 intent.putExtra("photo", photo);
+                                intent.putExtra("surname", surname);
+                                intent.putExtra("profession_number", profession_number);
+                                intent.putExtra("cabinet", cabinet);
+                                intent.putExtra("description", description);
                                 startActivity(intent);
                                 finish();
 

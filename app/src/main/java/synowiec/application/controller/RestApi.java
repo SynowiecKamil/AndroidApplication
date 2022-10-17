@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import synowiec.application.model.Treatment;
 
 public interface RestApi {
 
@@ -87,6 +88,13 @@ public interface RestApi {
                                @Field("query") String query,
                                @Field("start") String start,
                                @Field("limit") String limit);
+
+    @FormUrlEncoded
+    @POST("patient.php")
+    Call<ResponseModel> searchTreatment(@Field("action") String action,
+                           @Field("query") int query,
+                           @Field("start") String start,
+                           @Field("limit") String limit);
 
     @FormUrlEncoded
     @POST("patient.php")

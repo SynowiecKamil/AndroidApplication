@@ -14,7 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -39,17 +40,22 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Treatment;
+import synowiec.application.patient.PhysioDetailActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
 import static synowiec.application.helpers.Utils.show;
@@ -67,6 +73,9 @@ public class PhysioDashboardActivity extends AppCompatActivity{
     private ProgressBar mProgressBar;
     private Menu action;
     private Bitmap bitmap;
+    private ListView treatmentLV;
+    private ArrayList<String> treatmentNameList = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
     CircleImageView profile_image;
     private Context c = PhysioDashboardActivity.this;
 
@@ -76,6 +85,7 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         setContentView(R.layout.activity_physio_dashboard);
         initializeWidgets();
         showData(user);
+        retrieveTreatment("RETRIEVE_TREATMENT");
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +198,50 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         }else{
             System.out.println("Brak uzytkownika");
         }
+    }
+
+    private void showTreatmentList(){
+        adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, treatmentNameList);
+        treatmentLV.setAdapter(adapter);
+    }
+
+    private void retrieveTreatment(final String action) {
+
+        int queryID = Integer.parseInt(getId);
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> retrievedData;
+        retrievedData = api.searchTreatment(action, queryID, "0", "10");
+        retrievedData.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
+                    response) {
+                if(response == null || response.body() == null){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("RETROFIT", "response : " + response.body().getTreatments());
+                    List<Treatment> currentTreatment = response.body().getTreatments();
+                    System.out.println(currentTreatment);
+                    for (int i = 0; i < currentTreatment.size(); i++) {
+                        treatmentNameList.add(currentTreatment.get(i).getName());
+                    }
+                    showTreatmentList();
+                }else if (!response.isSuccessful()) {
+                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
+                            "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
+                                    " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
+                                    " \n 3. Most probably the problem is with your PHP Code.");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                showInfoDialog(PhysioDashboardActivity.this, "ERROR", t.getMessage());
+            }
+        });
     }
 
     //SELECT * FROM DB
@@ -431,6 +485,8 @@ public class PhysioDashboardActivity extends AppCompatActivity{
 
         profile_image = findViewById(R.id.profile_image);
         btn_delete_user = findViewById(R.id.btn_delete_user);
+
+        treatmentLV = findViewById(R.id.treatmentLV);
 
 
         user = sessionManager.getUserDetail();

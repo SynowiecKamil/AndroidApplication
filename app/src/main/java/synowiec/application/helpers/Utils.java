@@ -18,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import synowiec.application.R;
+import synowiec.application.model.PhysioTreatment;
 import synowiec.application.model.Physiotherapist;
 
 public class Utils {
@@ -86,6 +87,7 @@ public class Utils {
         }
         return null;
     }
+
 
     /**
      convert a string into a java.util.Date object and return it.

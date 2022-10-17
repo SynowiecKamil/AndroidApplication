@@ -15,15 +15,6 @@
         android:src="@drawable/logo"
         />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/btn_photo"-->
-    <!--        style="@style/Widget.AppCompat.ActionButton.CloseMode"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@+id/profile_image"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:text="Edytuj zdjęcie profilowe" />-->
-
     <LinearLayout
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
@@ -33,12 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <!--        <ImageView-->
-        <!--            android:src="@drawable/ic_name"-->
-        <!--            android:layout_weight="1"-->
-        <!--            android:layout_width="70dp"-->
-        <!--            android:layout_height="50dp" />-->
 
         <EditText
             android:id="@+id/name"
@@ -52,6 +37,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_text_email"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_below="@id/layout_text"
@@ -59,12 +45,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <!--        <ImageView-->
-        <!--            android:src="@drawable/ic_email"-->
-        <!--            android:layout_weight="1"-->
-        <!--            android:layout_width="70dp"-->
-        <!--            android:layout_height="50dp" />-->
 
         <EditText
             android:id="@+id/email"
@@ -74,8 +54,35 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/treatmentLayout"
+        android:layout_below="@id/layout_text_email">
+        <TextView
+            android:id="@+id/Treatment"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rodzaj przeprowadzanych zabiegów:" />
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/treatmentLV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_below="@id/treatmentLayout"/>
+
 
     <Button
         android:layout_alignParentBottom="true"
@@ -88,5 +95,6 @@
         android:text="Powrót"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
 
 </RelativeLayout>
