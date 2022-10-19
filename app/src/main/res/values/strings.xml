@@ -9,4 +9,13 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="treatment_prompt">Wybierz zabieg</string>
+
+    <string-array name="treatment_array">
+        <item>Masaz</item>
+        <item>Terapia manualna</item>
+        <item>PNF</item>
+        <item>Suche iglowanie</item>
+    </string-array>
 </resources>

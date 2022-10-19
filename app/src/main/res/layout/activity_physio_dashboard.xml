@@ -149,6 +149,7 @@
         android:layout_below="@id/layout_description">
 
         <LinearLayout
+            android:id="@+id/linear_layout_treatment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -174,7 +175,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_below="@id/Treatment"/>
+            android:layout_below="@id/linear_layout_treatment"/>
 
 
 

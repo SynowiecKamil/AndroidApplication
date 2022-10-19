@@ -1,6 +1,5 @@
 package synowiec.application.physio;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,12 +22,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -43,7 +36,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -53,9 +45,9 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.TreatmentDialog;
 import synowiec.application.helpers.Utils;
 import synowiec.application.model.Treatment;
-import synowiec.application.patient.PhysioDetailActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
 import static synowiec.application.helpers.Utils.show;
@@ -63,11 +55,11 @@ import static synowiec.application.helpers.Utils.showInfoDialog;
 import static synowiec.application.helpers.Utils.showProgressBar;
 
 
-public class PhysioDashboardActivity extends AppCompatActivity{
+public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener{
 
     private TextView name, email, surname, cabinet, description, profession_number;
     private String id = null, getId;
-    private Button btn_logout, btn_photo_upload, btn_delete_user;
+    private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment;
     private HashMap<String, String> user;
     SessionManager sessionManager;
     private ProgressBar mProgressBar;
@@ -108,6 +100,14 @@ public class PhysioDashboardActivity extends AppCompatActivity{
                         .setPositiveButton("NIE", x -> {})
                         .setNegativeButton("TAK", x -> deleteUser())
                         .show();
+            }
+        });
+
+        btn_add_treatment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TreatmentDialog treatmentDialog = new TreatmentDialog(getId);
+                treatmentDialog.show(getSupportFragmentManager(),"treatment dialog");
             }
         });
     }
@@ -486,10 +486,19 @@ public class PhysioDashboardActivity extends AppCompatActivity{
         profile_image = findViewById(R.id.profile_image);
         btn_delete_user = findViewById(R.id.btn_delete_user);
 
+        btn_add_treatment = findViewById(R.id.btn_add_treatment);
         treatmentLV = findViewById(R.id.treatmentLV);
 
 
         user = sessionManager.getUserDetail();
         getId = user.get(sessionManager.ID);
+    }
+
+
+    @Override
+    public void onCloseDialog() {
+        treatmentNameList.clear();
+        treatmentLV.setAdapter(null);
+        retrieveTreatment("RETRIEVE_TREATMENT");
     }
 }

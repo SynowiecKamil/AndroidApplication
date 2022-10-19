@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="treatment">
+        <item>Masaż</item>
+        <item>Terapia manualna</item>
+        <item>PNF</item>
+        <item>Suche igłowanie</item>
+    </string-array>
+</resources>
