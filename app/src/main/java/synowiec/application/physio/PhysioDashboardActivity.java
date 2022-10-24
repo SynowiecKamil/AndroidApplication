@@ -203,6 +203,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
     private void showTreatmentList(){
         adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, treatmentNameList);
         treatmentLV.setAdapter(adapter);
+        System.out.println("4. ShowTreatmentList");
     }
 
     private void retrieveTreatment(final String action) {
@@ -220,12 +221,13 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                     return;
                 }
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("RETROFIT", "response : " + response.body().getTreatments());
                     List<Treatment> currentTreatment = response.body().getTreatments();
-                    System.out.println(currentTreatment);
+                    System.out.println(" 1 . currentTreatment: " + currentTreatment);
                     for (int i = 0; i < currentTreatment.size(); i++) {
                         treatmentNameList.add(currentTreatment.get(i).getName());
                     }
+                    Log.d("2 . RETROFIT", "response : " + response.body().getTreatments());
+                    System.out.println("3. treatmentNameList: " + treatmentNameList);
                     showTreatmentList();
                 }else if (!response.isSuccessful()) {
                     showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",

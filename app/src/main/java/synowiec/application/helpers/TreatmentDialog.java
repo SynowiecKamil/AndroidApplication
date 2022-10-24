@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import synowiec.application.controller.RestApi;
 import synowiec.application.patient.PatientRegisterActivity;
 import synowiec.application.physio.PhysioDashboardActivity;
 
+import static synowiec.application.helpers.Utils.hideProgressBar;
 import static synowiec.application.helpers.Utils.show;
 import static synowiec.application.helpers.Utils.showInfoDialog;
 
@@ -29,6 +32,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
     private Spinner spinner;
     private DialogListener listener;
     private String id, treatmentName;
+    private ProgressBar mProgressBar;
 
     public TreatmentDialog(String id) {
         this.id = id;
@@ -54,11 +58,20 @@ public class TreatmentDialog extends AppCompatDialogFragment{
                     public void onClick(DialogInterface dialog, int which) {
                         treatmentName = spinner.getSelectedItem().toString().toLowerCase();
                         insertTreatment(id, treatmentName);
-                        listener.onCloseDialog();
+                        Utils.showProgressBar(mProgressBar);
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                listener.onCloseDialog();
+                                hideProgressBar(mProgressBar);
+                            }
+                        }, 500);
+
                     }
                 });
 
         spinner = view.findViewById(R.id.spinner);
+        mProgressBar = view.findViewById(R.id.mProgressBarSave);
         return builder.create();
     }
 
@@ -70,7 +83,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
             listener = (DialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
-                    "must implenet dialog listener");
+                    "must implement dialog listener");
         }
     }
 
@@ -98,7 +111,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
                     String myResponseCode = response.body().getCode();
 
                     if (myResponseCode.equals("1")) {
-                        System.out.printf("SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: "  +myResponseCode);
+                        System.out.printf("0. SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: "  +myResponseCode);
                  //       show(c, "Zarejestrowano pomyślnie!");
                     } else if (myResponseCode.equalsIgnoreCase("2")) {
                         System.out.println("UNSUCCESSFUL"+
