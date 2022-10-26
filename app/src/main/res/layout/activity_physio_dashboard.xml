@@ -157,13 +157,20 @@
                 android:layout_marginLeft="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rodzaj przeprowadzanych zabiegów:" />
+                android:text="Przeprowadzane zabiegi:" />
 
             <Button
                 android:id="@+id/btn_add_treatment"
                 android:textColor="@android:color/white"
                 android:backgroundTint="@color/colorPrimary"
                 android:text="Dodaj"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_delete_treatment"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Usuń"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

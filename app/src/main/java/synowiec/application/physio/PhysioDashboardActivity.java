@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -58,8 +59,8 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener{
 
     private TextView name, email, surname, cabinet, description, profession_number;
-    private String id = null, getId;
-    private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment;
+    private String id = null, getId, selectedTreatment;
+    private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment, btn_delete_treatment;
     private HashMap<String, String> user;
     SessionManager sessionManager;
     private ProgressBar mProgressBar;
@@ -108,6 +109,24 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
             public void onClick(View v) {
                 TreatmentDialog treatmentDialog = new TreatmentDialog(getId);
                 treatmentDialog.show(getSupportFragmentManager(),"treatment dialog");
+            }
+        });
+
+        btn_delete_treatment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteTreatment(selectedTreatment);
+                adapter.remove(selectedTreatment);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        treatmentLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position,
+                                    long arg3) {
+                selectedTreatment = (String) treatmentLV.getItemAtPosition(position);
+                System.out.println(selectedTreatment);
             }
         });
     }
@@ -460,6 +479,48 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         });
     }
 
+    private void deleteTreatment(String treatmentName) {
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> del = api.deleteTreatment("DELETE_TREATMENT", treatmentName, getId);
+        System.out.println("ID: " + getId + " treatment: " + treatmentName);
+
+        showProgressBar(mProgressBar);
+        del.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                if(response == null || response.body() == null || response.body().getCode()==null){
+                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+
+                Log.d("RETROFIT", "DELETE RESPONSE: " + response.body());
+                hideProgressBar(mProgressBar);
+                String myResponseCode = response.body().getCode();
+
+                if (myResponseCode.equalsIgnoreCase("1")) {
+                    System.out.println(response.body().getMessage());
+                    show(c, "Pomyślnie usunięto zabieg");
+                } else if (myResponseCode.equalsIgnoreCase("2")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
+                            "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL"+
+                                    " \n 2. WE ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+
+                                    myResponseCode+ " \n 3. Most probably the problem is with your PHP Code.");
+                }else if (myResponseCode.equalsIgnoreCase("3")) {
+                    showInfoDialog(PhysioDashboardActivity.this, "NO MYSQL CONNECTION",
+                            " Your PHP Code is unable to connect to mysql database. Make sure you have supplied correct database credentials.");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                hideProgressBar(mProgressBar);
+                Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                showInfoDialog(PhysioDashboardActivity.this, "FAILURE THROWN", "ERROR during DELETE attempt. Message: " + t.getMessage());
+            }
+        });
+    }
+
+
+
     public void initializeWidgets(){
         sessionManager = new SessionManager(this);
         sessionManager.checkLogin("fizjoterapeuta");
@@ -489,6 +550,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_delete_user = findViewById(R.id.btn_delete_user);
 
         btn_add_treatment = findViewById(R.id.btn_add_treatment);
+        btn_delete_treatment = findViewById(R.id.btn_delete_treatment);
         treatmentLV = findViewById(R.id.treatmentLV);
 
 

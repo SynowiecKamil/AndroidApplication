@@ -11,14 +11,12 @@ public class Treatment implements Serializable {
     private String id;
     @SerializedName("name")
     private String name;
-    @SerializedName("resultTreatment")
-    private List<Treatment> treatments = new ArrayList();
 
 
-    public Treatment(String id, String name, List<Treatment> treatments) {
+
+    public Treatment(String id, String name) {
         this.id = id;
         this.name = name;
-        this.treatments = treatments;
     }
 
     public String getId() {
@@ -35,14 +33,6 @@ public class Treatment implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Treatment> getTreatments() {
-        return treatments;
-    }
-
-    public void setTreatments(List<Treatment> treatments) {
-        this.treatments = treatments;
     }
 
     @Override

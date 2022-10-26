@@ -113,6 +113,12 @@ public interface RestApi {
 
     @FormUrlEncoded
     @POST("patient.php")
+    Call<ResponseModel> deleteTreatment(@Field("action") String action,
+                                        @Field("name") String name,
+                                        @Field("id") String id);
+
+    @FormUrlEncoded
+    @POST("patient.php")
     Call<ResponseModel> removePatient(@Field("action") String action, @Field("id") String id);
 
     @FormUrlEncoded
