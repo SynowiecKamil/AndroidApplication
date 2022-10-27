@@ -85,7 +85,8 @@ public interface RestApi {
     @FormUrlEncoded
     @POST("patient.php")
     Call<ResponseModel> search(@Field("action") String action,
-                               @Field("query") String query,
+                               @Field("firstParam") String firstParam,
+                               @Field("secondParam") String secondParam,
                                @Field("start") String start,
                                @Field("limit") String limit);
 

@@ -98,7 +98,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         holder.nameTxt.setText(p.getName());
         holder.mEmailTxt.setText(p.getEmail());
-        holder.galaxyTxt.setText(p.getPassword());
+        holder.galaxyTxt.setText(p.getCabinet());
         Picasso.get().load(p.getPhoto())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
