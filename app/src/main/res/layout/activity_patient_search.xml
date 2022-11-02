@@ -61,7 +61,7 @@
             android:id="@+id/spinnerTreatment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/treatment_array"
+            android:entries="@array/choose_treatment_array"
             android:prompt="@string/treatment_prompt"
             android:layout_weight="1"/>
 

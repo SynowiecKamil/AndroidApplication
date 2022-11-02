@@ -45,6 +45,16 @@
             android:text="Email"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="italic" />
+        <TextView
+            android:id="@+id/mTreatment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_below="@id/mEmailTxt"
+            android:maxLines="3"
+            android:text="Treatment"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic" />
 
         <TextView
             android:id="@+id/mGalaxyTxt"

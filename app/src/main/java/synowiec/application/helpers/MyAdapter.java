@@ -46,7 +46,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
      */
     public static class ViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        private TextView nameTxt, mEmailTxt, galaxyTxt;
+        private TextView nameTxt, mEmailTxt, galaxyTxt, treatmentTxt;
         CircleImageView profile_image;
         private MaterialLetterIcon mIcon;
         private ItemClickListener itemClickListener;
@@ -60,6 +60,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             nameTxt = itemView.findViewById(R.id.mNameTxt);
             mEmailTxt = itemView.findViewById(R.id.mEmailTxt);
             galaxyTxt = itemView.findViewById(R.id.mGalaxyTxt);
+            treatmentTxt = itemView.findViewById(R.id.mTreatment);
             itemView.setOnClickListener(this);
         }
         @Override

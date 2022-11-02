@@ -191,19 +191,16 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
                     try {
                         JSONObject jsonObject = new JSONObject(myResponse);
                         JSONArray jsonArray = jsonObject.getJSONArray("resultCabinet");
-
+                        cabinetList.add("");
                         for (int i = 0; i < jsonArray.length(); i++) {
-
                             JSONObject object = jsonArray.getJSONObject(i);
                             String cabinet = object.getString("cabinet").trim();
-                            if(cabinet != null) {
-                                cabinetList.add(cabinet);
-                                cabinetAdapter = new ArrayAdapter<>(PatientSearchActivity.this,
-                                        android.R.layout.simple_spinner_item, cabinetList);
-                                cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                spinnerCabinet.setAdapter(cabinetAdapter);
-                            }
+                            cabinetList.add(cabinet);
                         }
+                            cabinetAdapter = new ArrayAdapter<>(PatientSearchActivity.this,
+                                    android.R.layout.simple_spinner_item, cabinetList);
+                            cabinetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerCabinet.setAdapter(cabinetAdapter);
 
                     } catch (JSONException e) {
                         e.printStackTrace();

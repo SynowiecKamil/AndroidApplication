@@ -254,9 +254,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                                     " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
                                     " \n 3. Most probably the problem is with your PHP Code.");
                 }
-
             }
-
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
                 Log.d("RETROFIT", "ERROR: " + t.getMessage());
