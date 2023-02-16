@@ -10,22 +10,29 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
+    <string name="googlemap_key">AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y</string>
+    <!--    <string name="googlemap_key2">https://maps.googleapis.com/maps/api/place/autocomplete/json?input=ban&types=(cities)&key=AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y</string>-->
+
+
     <string name="treatment_prompt">Wybierz zabieg</string>
 
+
     <string-array name="treatment_array">
-        <item>Masaz</item>
+        <item>Masaż</item>
         <item>Taping</item>
         <item>PNF</item>
-        <item>Suche iglowanie</item>
+        <item>Suche igłowanie</item>
     </string-array>
 
     <string-array name="choose_treatment_array">
-        <item></item>
-        <item>Masaz</item>
+        <item>Dowolny</item>
+        <item>Masaż</item>
         <item>Taping</item>
         <item>PNF</item>
-        <item>Suche iglowanie</item>
+        <item>Suche igłowanie</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

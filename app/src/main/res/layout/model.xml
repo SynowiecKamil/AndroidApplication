@@ -36,33 +36,24 @@
             android:textColor="#009968" />
 
         <TextView
-            android:id="@+id/mEmailTxt"
+            android:id="@+id/mSurnameTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/profile_image"
             android:layout_below="@id/mNameTxt"
             android:maxLines="3"
-            android:text="Email"
+            android:text="Nazwisko"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="italic" />
-        <TextView
-            android:id="@+id/mTreatment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/profile_image"
-            android:layout_below="@id/mEmailTxt"
-            android:maxLines="3"
-            android:text="Treatment"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="italic" />
+
 
         <TextView
             android:id="@+id/mGalaxyTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Hasło"
-            android:textColor="@color/colorAccent"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_below="@id/mSurnameTxt"
+            android:text="Miasto"
             android:textStyle="italic"
             fontPath="fonts/RobotoCondensed-Regular.ttf"
             tools:ignore="MissingPrefix"/>

@@ -125,7 +125,6 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
      */
     private void retrieveAndFillRecyclerView(final String action, String firstParam, String secondParam,
                                              final String start, String limit) {
-
         mAdapter.searchString = firstParam;
         RestApi api = Utils.getClient().create(RestApi.class);
         Call<ResponseModel> retrievedData;
@@ -157,8 +156,10 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
                 } else {
                     if (action.equalsIgnoreCase("GET_PAGINATED_SEARCH")) {
                         allPagesPhysiotherapists.clear();
+
                     }
-                    show(PatientSearchActivity.this,"Hey! Reached End. No more Found");
+                    if(allPagesPhysiotherapists.isEmpty())
+                    show(PatientSearchActivity.this,"Brak wyników wyszukiwania.");
                 }
                 mAdapter.notifyDataSetChanged();
                 hideProgressBar(mProgressBar);
@@ -191,7 +192,7 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
                     try {
                         JSONObject jsonObject = new JSONObject(myResponse);
                         JSONArray jsonArray = jsonObject.getJSONArray("resultCabinet");
-                        cabinetList.add("");
+                        cabinetList.add("Dowolne");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
                             String cabinet = object.getString("cabinet").trim();
@@ -286,7 +287,6 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_back:
-                Utils.openActivity(this, PatientDashboardActivity.class);
                 finish();
                 return true;
         }
@@ -331,10 +331,18 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
 
         switch (parent.getId()) {
             case R.id.spinnerCabinet:
+                if(parent.getSelectedItem().toString().equals("Dowolne")){
+                    selectedCabinet = "";
+                }else{
                 selectedCabinet = parent.getSelectedItem().toString();
+                }
                 break;
             case R.id.spinnerTreatment:
-                selectedTreatment = parent.getSelectedItem().toString();
+                if(parent.getSelectedItem().toString().equals("Dowolny")) {
+                   selectedTreatment = "";
+                }else{
+                    selectedTreatment = parent.getSelectedItem().toString();
+                }
                 break;
             default:
                 break;

@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeRegist"
         android:usesCleartextTraffic="true">
+        <activity android:name=".patient.PatientAppointmentsActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main">
@@ -21,22 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".patient.PatientDashboardActivity">
-        </activity>
-        <activity android:name=".patient.PatientSearchActivity">
-        </activity>
-        <activity android:name=".patient.PhysioDetailActivity">
-        </activity>
-        <activity android:name=".physio.PhysioDashboardActivity">
-    </activity>
-        <activity android:name=".patient.PatientLoginActivity">
-        </activity>
-        <activity android:name=".physio.PhysioLoginActivity">
-        </activity>
-        <activity android:name=".patient.PatientRegisterActivity">
-        </activity>
-        <activity android:name=".physio.PhysioRegisterActivity">
-        </activity>
+        <activity
+            android:name=".patient.PatientDashboardActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity android:name=".patient.PatientReservationActivity"></activity>
+        <activity android:name=".patient.PatientSearchActivity"></activity>
+        <activity android:name=".patient.PhysioDetailActivity"></activity>
+        <activity
+            android:name=".physio.PhysioDashboardActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity android:name=".patient.PatientLoginActivity"></activity>
+        <activity android:name=".physio.PhysioLoginActivity"></activity>
+        <activity android:name=".patient.PatientRegisterActivity"></activity>
+        <activity android:name=".physio.PhysioRegisterActivity"></activity>
     </application>
 
 </manifest>

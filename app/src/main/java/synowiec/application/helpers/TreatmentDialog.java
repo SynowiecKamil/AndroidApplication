@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import retrofit2.Call;
@@ -21,6 +23,7 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.patient.PatientDashboardActivity;
 import synowiec.application.patient.PatientRegisterActivity;
 import synowiec.application.physio.PhysioDashboardActivity;
 
@@ -56,7 +59,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        treatmentName = spinner.getSelectedItem().toString().toLowerCase();
+                        treatmentName = spinner.getSelectedItem().toString();
                         insertTreatment(id, treatmentName);
                         Utils.showProgressBar(mProgressBar);
                         Handler handler = new Handler();
@@ -96,8 +99,6 @@ public class TreatmentDialog extends AppCompatDialogFragment{
             RestApi api = Utils.getClient().create(RestApi.class);
             Call<ResponseModel> insertData = api.insertTreatment("INSERT_TREATMENT", sName, sID);
 
-            //    Utils.showProgressBar(mProgressBar);
-
             insertData.enqueue(new Callback<ResponseModel>() {
                 @Override
                 public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
@@ -112,7 +113,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
 
                     if (myResponseCode.equals("1")) {
                         System.out.printf("0. SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: "  +myResponseCode);
-                 //       show(c, "Zarejestrowano pomyślnie!");
+                        Utils.show(getActivity(), "Dodano zabieg!");
                     } else if (myResponseCode.equalsIgnoreCase("2")) {
                         System.out.println("UNSUCCESSFUL"+
                                 "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
@@ -125,9 +126,9 @@ public class TreatmentDialog extends AppCompatDialogFragment{
                 @Override
                 public void onFailure(Call<ResponseModel> call, Throwable t) {
                     Log.d("RETROFIT", "ERROR: " + t.getMessage());
-//                    showInfoDialog(PatientRegisterActivity.this, "FAILURE",
-//                            "FAILURE THROWN DURING INSERT."+
-//                                    " ERROR Message: " + t.getMessage());
+                    showInfoDialog((AppCompatActivity) getActivity(), "FAILURE",
+                            "FAILURE THROWN DURING INSERT."+
+                                    " ERROR Message: " + t.getMessage());
                 }
             });
 

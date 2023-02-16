@@ -17,7 +17,9 @@
         android:layout_marginStart="29dp"
         android:layout_marginLeft="29dp"
         android:layout_marginTop="310dp"
-        android:text="Jestem Fizjoterapeutą" />
+        android:text="Jestem Fizjoterapeutą"
+        android:backgroundTint="@color/colorPrimary2"
+        android:textColor="@color/colorText"/>
 
     <Button
         android:id="@+id/btn_patient"
@@ -30,7 +32,9 @@
         android:layout_marginTop="311dp"
         android:layout_marginEnd="27dp"
         android:layout_marginRight="27dp"
-        android:text="Jestem Pacjentem" />
+        android:text="Jestem Pacjentem"
+        android:backgroundTint="@color/colorPrimary2"
+        android:textColor="@color/colorText"/>
 
     <TextView
         android:id="@+id/textView5"

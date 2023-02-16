@@ -76,7 +76,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="109dp"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:text="Powrot"
+        android:text="Powrót"
         android:textColor="@color/colorText" />
 
     <TextView

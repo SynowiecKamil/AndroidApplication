@@ -3,9 +3,12 @@ package synowiec.application.physio;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -16,13 +19,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -46,9 +54,11 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.MyCabinetAdapter;
 import synowiec.application.helpers.TreatmentDialog;
 import synowiec.application.helpers.Utils;
 import synowiec.application.model.Treatment;
+import synowiec.application.patient.PatientDashboardActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
 import static synowiec.application.helpers.Utils.show;
@@ -56,29 +66,36 @@ import static synowiec.application.helpers.Utils.showInfoDialog;
 import static synowiec.application.helpers.Utils.showProgressBar;
 
 
-public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener{
+public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener, MyCabinetAdapter.ClickListener{
 
     private TextView name, email, surname, cabinet, description, profession_number;
     private String id = null, getId, selectedTreatment;
     private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment, btn_delete_treatment;
-    private HashMap<String, String> user;
+    private boolean editMode;
+    private HashMap<String, String> user = null;
     SessionManager sessionManager;
     private ProgressBar mProgressBar;
     private Menu action;
     private Bitmap bitmap;
+    private View previousView;
     private ListView treatmentLV;
     private ArrayList<String> treatmentNameList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     CircleImageView profile_image;
+    private RecyclerView cabinetRecyclerView;
     private Context c = PhysioDashboardActivity.this;
+    private MyCabinetAdapter myCabinetAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physio_dashboard);
         initializeWidgets();
-        showData(user);
-        retrieveTreatment("RETRIEVE_TREATMENT");
+        if(user.containsValue(null) != true) {
+            showData(user);
+            retrieveTreatment("RETRIEVE_TREATMENT", getId);
+            initializeCabinetAdapter();
+        }
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,18 +132,45 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_delete_treatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteTreatment(selectedTreatment);
-                adapter.remove(selectedTreatment);
-                adapter.notifyDataSetChanged();
+                if(selectedTreatment != null) {
+                    new LovelyStandardDialog(c, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                            .setMessage("Czy na pewno chcesz usunąć zabieg?")
+                            .setPositiveButton("NIE", x -> {
+                            })
+                            .setNegativeButton("TAK", x -> {
+                                deleteTreatment(selectedTreatment);
+                                adapter.remove(selectedTreatment);
+                                adapter.notifyDataSetChanged();
+                                previousView.setBackgroundResource(0);
+                                selectedTreatment = null;
+                            })
+                            .show();
+                }else{
+                    Toast.makeText(PhysioDashboardActivity.this, "Proszę wybrać zabieg do usunięcia",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         treatmentLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position,
+            public void onItemClick(AdapterView<?> adapterView, View view, int position,
                                     long arg3) {
-                selectedTreatment = (String) treatmentLV.getItemAtPosition(position);
-                System.out.println(selectedTreatment);
+                if(editMode){
+                        if (previousView != null) {
+                            previousView.setBackgroundResource(0);
+                        }
+                        if (view != previousView) {
+                            selectedTreatment = (String) treatmentLV.getItemAtPosition(position);
+                            view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                            previousView = view;
+                            System.out.println(selectedTreatment);
+                        } else {
+                            view.setBackgroundResource(0);
+                            selectedTreatment = null;
+                            previousView = null;
+                        }
+                    }
             }
         });
     }
@@ -153,6 +197,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         switch (item.getItemId()){
             case R.id.menu_edit:
 
+                editMode=true;
                 name.setFocusableInTouchMode(true);
                 email.setFocusableInTouchMode(true);
                 surname.setFocusableInTouchMode(true);
@@ -160,6 +205,10 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                 cabinet.setFocusableInTouchMode(true);
                 description.setFocusableInTouchMode(true);
                 btn_photo_upload.setVisibility(View.VISIBLE);
+                btn_delete_user.setVisibility(View.VISIBLE);
+                btn_logout.setVisibility(View.GONE);
+                btn_add_treatment.setVisibility(View.VISIBLE);
+                btn_delete_treatment.setVisibility(View.VISIBLE);
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(name, InputMethodManager.SHOW_IMPLICIT);
@@ -171,6 +220,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
 
             case R.id.menu_save:
 
+                editMode=false;
                 updateData();
                 if(bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
 
@@ -190,6 +240,10 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                 cabinet.setFocusable(false);
                 description.setFocusable(false);
                 btn_photo_upload.setVisibility(View.GONE);
+                btn_delete_user.setVisibility(View.GONE);
+                btn_logout.setVisibility(View.VISIBLE);
+                btn_add_treatment.setVisibility(View.GONE);
+                btn_delete_treatment.setVisibility(View.GONE);
 
                 return true;
 
@@ -202,7 +256,9 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
 
     //RECEIVE DATA FROM SESSION MANAGER AND FILL
     private void showData(HashMap<String, String> user){
-        if(user != null){
+
+        if(user.containsValue(null) != true){
+            System.out.println(user);
             name.setText(user.get(sessionManager.NAME));
             email.setText(user.get(sessionManager.EMAIL));
             surname.setText(user.get(sessionManager.SURNAME));
@@ -225,18 +281,17 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         System.out.println("4. ShowTreatmentList");
     }
 
-    private void retrieveTreatment(final String action) {
+    private void retrieveTreatment(final String action, String userID) {
 
-        int queryID = Integer.parseInt(getId);
         RestApi api = Utils.getClient().create(RestApi.class);
         Call<ResponseModel> retrievedData;
-        retrievedData = api.searchTreatment(action, queryID, "0", "10");
+        retrievedData = api.searchTreatment(action, userID, "0", "10");
         retrievedData.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
                     response) {
                 if(response == null || response.body() == null){
-                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                   // showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
                 if (response.isSuccessful() && response.body() != null) {
@@ -257,70 +312,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
             }
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                Log.d("RETROFIT", "ERROR: " + t.getMessage());
-                showInfoDialog(PhysioDashboardActivity.this, "ERROR", t.getMessage());
-            }
-        });
-    }
-
-    //SELECT * FROM DB
-    private void receiveFromDatabase(){
-        RestApi api = Utils.getClient().create(RestApi.class);
-        Call<String> login = api.getPhysioData("READ", getId);
-
-        login.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-
-                if(response == null || response.body() == null ){
-                    showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
-                    return;
-                }
-
-                Log.d("RETROFIT", "response : " + response.body().toString());
-                String myResponse = response.body().toString();
-
-                if (response.isSuccessful() && response.body() != null) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(myResponse);
-                        JSONArray jsonArray = jsonObject.getJSONArray("result");
-
-                        for (int i = 0; i < jsonArray.length(); i++) {
-
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String name = object.getString("name").trim();
-                            String email = object.getString("email").trim();
-                            String id = object.getString("id").trim();
-                            String photo = object.getString("photo").trim();
-                            String surname = object.getString("surname").trim();
-                            String profession_number = object.getString("profession_number").trim();
-                            String cabinet = object.getString("cabinet").trim();
-                            String description = object.getString("description").trim();
-
-                            //   receivedPhysio = new Physiotherapist(id, name, email, photo);
-                            sessionManager.createSession(id, name, email, photo, surname, profession_number, cabinet, description);
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(PhysioDashboardActivity.this, "Bląd!", Toast.LENGTH_SHORT).show();
-                    }
-                } else if (!response.isSuccessful()) {
-                    showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
-                            "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
-                                    " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
-                                    " \n 3. Most probably the problem is with your PHP Code.");
-                }
-                //       hideProgressBar(mProgressBar);
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d("RETROFIT", "ERROR: " + t.getMessage());
-                //     hideProgressBar(mProgressBar);
-                showInfoDialog(PhysioDashboardActivity.this, "FAILURE",
-                        "FAILURE THROWN DURING INSERT."+
-                                " ERROR Message: " + t.getMessage());
+                Log.d("RETROFIT", "ERROR during retrieving Treatment: " + t.getMessage());
             }
         });
     }
@@ -517,6 +509,38 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         });
     }
 
+    private void initializeCabinetAdapter(){
+        cabinet.addTextChangedListener(myCabinetTextWatcher);
+        myCabinetAdapter = new MyCabinetAdapter(PhysioDashboardActivity.this);
+        cabinetRecyclerView.setLayoutManager(new LinearLayoutManager(PhysioDashboardActivity.this));
+        myCabinetAdapter.setClickListener(this);
+        cabinetRecyclerView.setAdapter(myCabinetAdapter);
+        myCabinetAdapter.notifyDataSetChanged();
+    }
+
+    public TextWatcher myCabinetTextWatcher = new TextWatcher(){
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if(!editable.toString().equals("")){
+                myCabinetAdapter.getFilter().filter(editable.toString());
+                if(cabinetRecyclerView.getVisibility() == View.GONE){
+                    cabinetRecyclerView.setVisibility(View.VISIBLE);
+                }
+            }else{
+                if(cabinetRecyclerView.getVisibility() == View.VISIBLE){
+                    cabinetRecyclerView.setVisibility(View.GONE);
+                }
+            }
+        }
+    };
+
 
 
     public void initializeWidgets(){
@@ -539,6 +563,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         cabinet.setFocusableInTouchMode(false);
         description = findViewById(R.id.description);
         description.setFocusableInTouchMode(false);
+        description.setVisibility(View.GONE);
         btn_logout = findViewById(R.id.btn_logout);
 
         btn_photo_upload = findViewById(R.id.btn_photo);
@@ -548,12 +573,17 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_delete_user = findViewById(R.id.btn_delete_user);
 
         btn_add_treatment = findViewById(R.id.btn_add_treatment);
+        btn_add_treatment.setVisibility(View.GONE);
         btn_delete_treatment = findViewById(R.id.btn_delete_treatment);
+        btn_delete_treatment.setVisibility(View.GONE);
         treatmentLV = findViewById(R.id.treatmentLV);
 
 
-        user = sessionManager.getUserDetail();
+        user = sessionManager.getUserDetail("physio");
         getId = user.get(sessionManager.ID);
+
+        cabinetRecyclerView = findViewById(R.id.cabinet_recyclerview);
+        Places.initialize(PhysioDashboardActivity.this, getResources().getString(R.string.googlemap_key));
     }
 
 
@@ -561,6 +591,14 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
     public void onCloseDialog() {
         treatmentNameList.clear();
         treatmentLV.setAdapter(null);
-        retrieveTreatment("RETRIEVE_TREATMENT");
+        if(user.containsValue(null) != true)
+        retrieveTreatment("RETRIEVE_TREATMENT", getId);
+    }
+
+    @Override
+    public void click(Place place) {
+        String city = String.valueOf(place.getName());
+        cabinet.setText(city);
+        cabinetRecyclerView.setVisibility(View.GONE);
     }
 }

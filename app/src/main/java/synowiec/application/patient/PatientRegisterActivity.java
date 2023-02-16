@@ -54,7 +54,9 @@ public class PatientRegisterActivity extends AppCompatActivity {
 
         btn_regist.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { insertData();}
+            public void onClick(View v) {
+                insertData();
+            }
         });
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,75 +66,6 @@ public class PatientRegisterActivity extends AppCompatActivity {
         });
     }
 
-//    private void Regist(){
-//        loading.setVisibility(View.VISIBLE);
-//        btn_regist.setVisibility(View.GONE);
-//        name = findViewById(R.id.name);
-//        email = findViewById(R.id.email);
-//        password = findViewById(R.id.password);
-//        c_password = findViewById(R.id.c_password);
-//        final String sName = this.name.getText().toString().trim();
-//        final String sEmail = this.email.getText().toString().trim();
-//        final String sPassword = this.password.getText().toString().trim();
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_REGIST,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try{
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            String success = jsonObject.getString("success");
-//
-//                            if (success.equals("1")) {
-//                                Toast.makeText(PatientRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
-//                                loading.setVisibility(View.GONE);
-//                                btn_login.setVisibility(View.VISIBLE);
-//                                btn_regist.setVisibility(View.GONE);
-//                            }else if(success.equals("0")){
-//                                loading.setVisibility(View.GONE);
-//                                btn_regist.setVisibility(View.VISIBLE);
-//                                name.setError(null);
-//                                password.setError(null);
-//                                c_password.setError(null);
-//                                email.getText().clear();
-//                                email.setError("Wprowadz poprawny email");
-//                                Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
-//                            }
-//
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
-//                            loading.setVisibility(View.GONE);
-//                            btn_regist.setVisibility(View.VISIBLE);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(PatientRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
-//                        loading.setVisibility(View.GONE);
-//                        btn_regist.setVisibility(View.VISIBLE);
-//                    }
-//                })
-//
-//        {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("name", sName);
-//                params.put("email", sEmail);
-//                params.put("password", sPassword);
-//                return params;
-//            }
-//        };
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        requestQueue.add(stringRequest);
-//
-//
-//    }
 
     private void insertData() {
         String sName, sEmail, sPassword, sC_password;
@@ -162,6 +95,12 @@ public class PatientRegisterActivity extends AppCompatActivity {
                     if (myResponseCode.equals("1")) {
                         System.out.printf("SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: "  +myResponseCode);
                         show(c, "Zarejestrowano pomyślnie!");
+                        showInfoDialog(PatientRegisterActivity.this,"Gratulacje", "Pomyślnie zarejestrowano użytkownika");
+                        nameET.getText().clear();
+                        emailET.getText().clear();
+                        passwordET.getText().clear();
+                        c_passwordET.getText().clear();
+                        getCurrentFocus().clearFocus();
                         btn_regist.setVisibility(View.GONE);
                         btn_login.setVisibility(View.VISIBLE);
                         //       Utils.openActivity(c, ScientistsActivity.class);

@@ -50,13 +50,14 @@ public class SessionManager {
 
     }
 
-    public void createSession(String id, String name, String email, String photo){
+    public void createSession(String id, String name, String email, String photo, String surname){
 
         editor.putBoolean(LOGIN, true);
         editor.putString(NAME, name);
         editor.putString(EMAIL, email);
         editor.putString(ID, id);
         editor.putString(PHOTO, photo);
+        editor.putString(SURNAME, surname);
         editor.apply();
 
     }
@@ -83,17 +84,25 @@ public class SessionManager {
 
     }
 
-    public HashMap<String, String> getUserDetail(){
+    public HashMap<String, String> getUserDetail(String userType){
 
         HashMap<String, String> user = new HashMap<>();
-        user.put(ID, sharedPreferences.getString(ID, null));
-        user.put(NAME, sharedPreferences.getString(NAME, null));
-        user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
-        user.put(PHOTO, sharedPreferences.getString(PHOTO, null));
-        user.put(SURNAME, sharedPreferences.getString(SURNAME, null));
-        user.put(PROFESSION_NUMBER, sharedPreferences.getString(PROFESSION_NUMBER, null));
-        user.put(CABINET, sharedPreferences.getString(CABINET, null));
-        user.put(DESCRIPTION, sharedPreferences.getString(DESCRIPTION, null));
+        if(userType.equals("physio")) {
+            user.put(ID, sharedPreferences.getString(ID, null));
+            user.put(NAME, sharedPreferences.getString(NAME, null));
+            user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
+            user.put(PHOTO, sharedPreferences.getString(PHOTO, null));
+            user.put(SURNAME, sharedPreferences.getString(SURNAME, null));
+            user.put(PROFESSION_NUMBER, sharedPreferences.getString(PROFESSION_NUMBER, null));
+            user.put(CABINET, sharedPreferences.getString(CABINET, null));
+            user.put(DESCRIPTION, sharedPreferences.getString(DESCRIPTION, null));
+        }else if(userType.equals("patient")){
+            user.put(ID, sharedPreferences.getString(ID, null));
+            user.put(NAME, sharedPreferences.getString(NAME, null));
+            user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
+            user.put(PHOTO, sharedPreferences.getString(PHOTO, null));
+            user.put(SURNAME, sharedPreferences.getString(SURNAME, null));
+        }
         return user;
     }
 

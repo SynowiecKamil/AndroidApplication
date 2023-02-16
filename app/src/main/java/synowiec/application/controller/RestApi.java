@@ -49,7 +49,7 @@ public interface RestApi {
 
     @FormUrlEncoded
     @POST("patient.php")
-    Call<String> getPatientData(@Field("action") String action,
+    Call<ResponseModel> getPatientData(@Field("action") String action,
                                 @Field("id") String id);
 
     @FormUrlEncoded
@@ -68,7 +68,8 @@ public interface RestApi {
     Call<ResponseModel> updatePatient(@Field("action") String action,
                                       @Field("id") String id,
                                       @Field("name") String name,
-                                      @Field("email") String email);
+                                      @Field("email") String email,
+                                      @Field("surname") String surname);
 
     @FormUrlEncoded
     @POST("patient.php")
@@ -93,7 +94,7 @@ public interface RestApi {
     @FormUrlEncoded
     @POST("patient.php")
     Call<ResponseModel> searchTreatment(@Field("action") String action,
-                           @Field("query") int query,
+                           @Field("query") String query,
                            @Field("start") String start,
                            @Field("limit") String limit);
 
@@ -125,4 +126,31 @@ public interface RestApi {
     @FormUrlEncoded
     @POST("physiotherapist.php")
     Call<ResponseModel> removePhysio(@Field("action") String action, @Field("id") String id);
+
+    //----------------- appointment --------------//
+    @FormUrlEncoded
+    @POST("appointment.php")
+    Call<ResponseModel> insertAppointment(@Field("action") String action,
+                                          @Field("physioId") String physioId,
+                                          @Field("patientId") String patientId,
+                                          @Field("date") String date,
+                                          @Field("time") String time,
+                                          @Field("place") String place,
+                                          @Field("treatment") String treatment);
+    @FormUrlEncoded
+    @POST("appointment.php")
+    Call<ResponseModel> deleteAppointment(@Field("action") String action,
+                                          @Field("id") String id);
+    @FormUrlEncoded
+    @POST("appointment.php")
+    Call<ResponseModel> updateAppointment(@Field("action") String action,
+                                          @Field("id") String id,
+                                          @Field("date") String date,
+                                          @Field("time") String time,
+                                          @Field("place") String place,
+                                          @Field("treatment") String treatment);
+    @FormUrlEncoded
+    @POST("appointment.php")
+    Call<ResponseModel> getAppointment(@Field("action") String action,
+                                       @Field("userID") String userID);
 }

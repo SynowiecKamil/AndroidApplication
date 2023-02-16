@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -20,14 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -39,17 +44,24 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
+import synowiec.application.MainActivity;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.MyCabinetAdapter;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Patient;
+import synowiec.application.model.Treatment;
 import synowiec.application.physio.PhysioDashboardActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
@@ -60,13 +72,13 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 
 public class PatientDashboardActivity extends AppCompatActivity {
 
-    private TextView name, email;
-    private String id = null;
-    private Button btn_logout, btn_photo_upload, btn_search_physio, btn_delete_user;
+    private TextView name, email, surname;
+    private String getId;
+    private Button btn_logout, btn_photo_upload, btn_search_physio, btn_delete_user, btn_my_appointments;
     private HashMap<String, String> user;
     private ProgressBar mProgressBar;
+    private List<Patient> currentPatient = new ArrayList<>();
     SessionManager sessionManager;
-    String getId;
     private Menu action;
     private Bitmap bitmap = null;
     CircleImageView profile_image;
@@ -78,11 +90,14 @@ public class PatientDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_dashboard);
         initializeWidgets();
+        loadPatient("READ", getId);
         showData(user);
+
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.currentPatient = null;
                 sessionManager.logout("patient");
             }
         });
@@ -94,10 +109,21 @@ public class PatientDashboardActivity extends AppCompatActivity {
             }
         });
 
+        btn_my_appointments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openActivity(c, PatientAppointmentsActivity.class);
+            }
+        });
+
         btn_search_physio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                openActivity(PatientDashboardActivity.this, PatientSearchActivity.class);
+                if(surname.getText().toString().equals(""))
+                    show(c, "Uzupełnij swoje dane by kontynuować!");
+                else {
+                    openActivity(PatientDashboardActivity.this, PatientSearchActivity.class);
+                }
             }
         });
 
@@ -116,6 +142,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void onBackPressed()
     {
@@ -146,7 +173,12 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
                 name.setFocusableInTouchMode(true);
                 email.setFocusableInTouchMode(true);
+                surname.setFocusableInTouchMode(true);
                 btn_photo_upload.setVisibility(View.VISIBLE);
+                btn_delete_user.setVisibility(View.VISIBLE);
+                btn_my_appointments.setVisibility(View.GONE);
+                btn_search_physio.setVisibility(View.GONE);
+                btn_logout.setVisibility(View.GONE);
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(name, InputMethodManager.SHOW_IMPLICIT);
@@ -164,11 +196,17 @@ public class PatientDashboardActivity extends AppCompatActivity {
                 action.findItem(R.id.menu_edit).setVisible(true);
                 action.findItem(R.id.menu_save).setVisible(false);
                 btn_photo_upload.setVisibility(View.GONE);
+                btn_delete_user.setVisibility(View.GONE);
+                btn_my_appointments.setVisibility(View.VISIBLE);
+                btn_search_physio.setVisibility(View.VISIBLE);
+                btn_logout.setVisibility(View.VISIBLE);
 
                 name.setFocusableInTouchMode(false);
                 email.setFocusableInTouchMode(false);
+                surname.setFocusableInTouchMode(false);
                 name.setFocusable(false);
                 email.setFocusable(false);
+                surname.setFocusable(false);
 
                 return true;
 
@@ -179,10 +217,48 @@ public class PatientDashboardActivity extends AppCompatActivity {
         }
     }
 
+    private void loadPatient(String action, String patientId) {
+        if(user.containsValue(null) != true) {
+            RestApi api = Utils.getClient().create(RestApi.class);
+            Call<ResponseModel> retrievedData;
+            retrievedData = api.getPatientData(action, patientId);
+            retrievedData.enqueue(new Callback<ResponseModel>() {
+                @Override
+                public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
+                        response) {
+                    if (response == null || response.body() == null) {
+                        showInfoDialog(PatientDashboardActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
+                        return;
+                    }
+                    if (response.isSuccessful() && response.body() != null) {
+                        currentPatient = response.body().getPatients();
+                        for (int i = 0; i < currentPatient.size(); i++) {
+                            Utils.currentPatient = currentPatient.get(i);
+                        }
+                    } else if (!response.isSuccessful()) {
+                        showInfoDialog(PatientDashboardActivity.this, "UNSUCCESSFUL",
+                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE" +
+                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: " + " " +
+                                        " \n 3. Most probably the problem is with your PHP Code.");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseModel> call, Throwable t) {
+                    Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                    showInfoDialog(PatientDashboardActivity.this, "ERROR", t.getMessage());
+                }
+            });
+        }
+    }
+
+
     private void showData(HashMap<String, String> user){
-        if(user != null){
+        if(user.containsValue(null) != true){
+            System.out.println(user);
             name.setText(user.get(sessionManager.NAME));
             email.setText(user.get(sessionManager.EMAIL));
+            surname.setText(user.get(sessionManager.SURNAME));
             Picasso.get().load(user.get(sessionManager.PHOTO))
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
@@ -193,15 +269,33 @@ public class PatientDashboardActivity extends AppCompatActivity {
         }
     }
 
+    private void showData2(Patient patient){
+        if(user.containsValue(null) != true){
+            System.out.println(patient.toString());
+            name.setText(patient.getName());
+            email.setText(patient.getEmail());
+            surname.setText(patient.getSurname());
+            Picasso.get().load(patient.getPhoto())
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(profile_image);
+            System.out.println("Znaleziono uzytkownika");
+        }else{
+            System.out.println("Brak uzytkownika");
+        }
+    }
+
     private void updateData() {
-        String sName, sEmail, sId;
+        String sName, sEmail, sId, sSurname;
         sName = name.getText().toString();
         sEmail = email.getText().toString();
+        sSurname = surname.getText().toString();
         sId = getId;
+
 
         showProgressBar(mProgressBar);
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> update = api.updatePatient("UPDATE", sId, sName, sEmail);
+        Call<ResponseModel> update = api.updatePatient("UPDATE", sId, sName, sEmail, sSurname);
         update.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
@@ -351,6 +445,8 @@ public class PatientDashboardActivity extends AppCompatActivity {
         name.setFocusableInTouchMode(false);
         email = findViewById(R.id.email);
         email.setFocusableInTouchMode(false);
+        surname = findViewById(R.id.surname);
+        surname.setFocusableInTouchMode(false);
 
         btn_logout = findViewById(R.id.btn_logout);
 
@@ -358,10 +454,12 @@ public class PatientDashboardActivity extends AppCompatActivity {
         btn_photo_upload.setVisibility(View.GONE);
 
         profile_image = findViewById(R.id.profile_image);
+        btn_my_appointments = findViewById(R.id.btn_my_appointments);
         btn_search_physio = findViewById(R.id.btn_search_physio);
         btn_delete_user = findViewById(R.id.btn_delete_user);
 
-        user = sessionManager.getUserDetail();
+        user = sessionManager.getUserDetail("patient");
         getId = user.get(sessionManager.ID);
     }
+
 }

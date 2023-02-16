@@ -77,13 +77,22 @@
 
     <ListView
         android:id="@+id/treatmentLV"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="341dp"
+        android:layout_height="282dp"
+        android:layout_below="@id/treatmentLayout"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp" />
+
+    <Button
+        android:id="@+id/btn_appointment"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_below="@id/treatmentLayout"/>
-
-
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary2"
+        android:text="Rezerwuj wizytę"
+        android:layout_above="@id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <Button
         android:layout_alignParentBottom="true"
         android:id="@+id/btn_back"

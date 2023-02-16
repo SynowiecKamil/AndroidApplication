@@ -46,7 +46,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
      */
     public static class ViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        private TextView nameTxt, mEmailTxt, galaxyTxt, treatmentTxt;
+        private TextView nameTxt, surnameTxt, galaxyTxt;
         CircleImageView profile_image;
         private MaterialLetterIcon mIcon;
         private ItemClickListener itemClickListener;
@@ -58,9 +58,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         //    mIcon = itemView.findViewById(R.id.mMaterialLetterIcon);
             profile_image = itemView.findViewById(R.id.profile_image);
             nameTxt = itemView.findViewById(R.id.mNameTxt);
-            mEmailTxt = itemView.findViewById(R.id.mEmailTxt);
+            surnameTxt = itemView.findViewById(R.id.mSurnameTxt);
             galaxyTxt = itemView.findViewById(R.id.mGalaxyTxt);
-            treatmentTxt = itemView.findViewById(R.id.mTreatment);
             itemView.setOnClickListener(this);
         }
         @Override
@@ -96,9 +95,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         final Physiotherapist p = physiotherapists.get(position);
 
-
+        System.out.println(p.getId()+" "+p.getName()+" " + p.getSurname()+ " "+ p.getDescription());
         holder.nameTxt.setText(p.getName());
-        holder.mEmailTxt.setText(p.getEmail());
+        holder.surnameTxt.setText(p.getSurname());
         holder.galaxyTxt.setText(p.getCabinet());
         Picasso.get().load(p.getPhoto())
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
@@ -116,7 +115,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
 
         String name = p.getName().toLowerCase(Locale.getDefault());
-        String email = p.getEmail().toLowerCase(Locale.getDefault());
+        String surname = p.getSurname().toLowerCase(Locale.getDefault());
+        String cabinet = p.getCabinet().toLowerCase(Locale.getDefault());
 
         //highlight name text while searching
         if (name.contains(searchString) && !(searchString.isEmpty())) {
@@ -131,18 +131,34 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             holder.nameTxt.setText(spanString);
         }
         //      highlight email text while searching
-        if (email.contains(searchString) && !(searchString.isEmpty())) {
+        if (surname.contains(searchString) && !(searchString.isEmpty())) {
 
-            int startPos = email.indexOf(searchString);
+            int startPos = surname.indexOf(searchString);
             int endPos = startPos + searchString.length();
 
             Spannable spanString = Spannable.Factory.getInstance().
-                    newSpannable(holder.mEmailTxt.getText());
+                    newSpannable(holder.surnameTxt.getText());
             spanString.setSpan(new ForegroundColorSpan(Color.BLUE), startPos, endPos,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            holder.mEmailTxt.setText(spanString);
+            holder.surnameTxt.setText(spanString);
+
         }
+        //      highlight cabinet text while searching
+        if (cabinet.contains(searchString) && !(searchString.isEmpty())) {
+
+            int startPos = cabinet.indexOf(searchString);
+            int endPos = startPos + searchString.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().
+                    newSpannable(holder.galaxyTxt.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.RED), startPos, endPos,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            holder.galaxyTxt.setText(spanString);
+
+        }
+
         //open detail activity when clicked
         holder.setItemClickListener(pos -> Utils.sendPhysiotherapistToActivity(c, p,
                 PhysioDetailActivity.class));

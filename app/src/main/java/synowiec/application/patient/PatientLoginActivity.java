@@ -35,6 +35,7 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.RestApi;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Patient;
 
 import static synowiec.application.helpers.Utils.showInfoDialog;
 
@@ -94,7 +95,7 @@ public class PatientLoginActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Log.d("RETROFIT", "response : " + response.body().toString());
+                 //   Log.d("RETROFIT", "response : " + response.body().toString());
                     String myResponse = response.body().toString();
 
                     if (response.isSuccessful() && response.body() != null) {
@@ -110,12 +111,14 @@ public class PatientLoginActivity extends AppCompatActivity {
                                 String name = object.getString("name").trim();
                                 String email = object.getString("email").trim();
                                 String photo = object.getString("photo").trim();
+                                String surname = object.getString("surname").trim();
 
-                                sessionManager.createSession(id, name, email, photo);
+                                sessionManager.createSession(id, name, email, photo, surname);
                                 Intent intent = new Intent(PatientLoginActivity.this, PatientDashboardActivity.class);
                                 intent.putExtra("name", name);
                                 intent.putExtra("email", email);
                                 intent.putExtra("photo", photo);
+                                intent.putExtra("surname", surname);
                                 startActivity(intent);
                                 finish();
 
@@ -149,6 +152,7 @@ public class PatientLoginActivity extends AppCompatActivity {
         } else {
             email.setError("Proszę wprowadzić email");
             password.setError("Proszę wprowadzić hasło");
+            loading.setVisibility(View.GONE);
         }
     }
 

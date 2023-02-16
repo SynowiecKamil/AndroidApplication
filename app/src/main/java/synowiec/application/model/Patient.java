@@ -15,12 +15,15 @@ public class Patient implements Serializable {
     private String password;
     @SerializedName("photo")
     private String photo;
+    @SerializedName("surname")
+    private String surname;
 
-    public Patient(String id, String name, String email, String photo) {
+    public Patient(String id, String name, String email, String photo, String surname) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.photo = photo;
+        this.surname = surname;
     }
 
     public String getId() {
@@ -62,4 +65,8 @@ public class Patient implements Serializable {
     public void setPhoto(String photo) {
         this.photo = photo;
     }
+
+    public String getSurname() { return surname;    }
+
+    public void setSurname(String surname) { this.surname = surname;    }
 }
