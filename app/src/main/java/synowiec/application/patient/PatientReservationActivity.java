@@ -64,7 +64,8 @@ public class PatientReservationActivity extends AppCompatActivity {
             }
             else if(step==2) {
                     Utils.currentTreatment = intent.getStringExtra(Utils.KEY_TREATMENT_SELECTED);
-                    System.out.println("currentTreatment: "+ Utils.currentTreatment);
+                    Utils.currentPrice = intent.getDoubleExtra(Utils.KEY_PRICE_SELECTED, -1);
+                    System.out.println("currentTreatment: "+ Utils.currentTreatment + " current price: " + Utils.currentPrice);
                     btn_next_step.setEnabled(true);
             }
             setColorButton();
@@ -76,6 +77,7 @@ public class PatientReservationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_reservation);
         ButterKnife.bind(PatientReservationActivity.this);
+        getSupportActionBar().hide();
 
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(buttonNextReceiver, new IntentFilter(Utils.KEY_ENABLE_BUTTON_NEXT));
@@ -154,7 +156,7 @@ public class PatientReservationActivity extends AppCompatActivity {
 
     private void setColorButton() {
         if(btn_next_step.isEnabled()){
-            btn_next_step.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            btn_next_step.setBackgroundColor(getResources().getColor(R.color.teal));
         }
         else
         {
@@ -162,7 +164,7 @@ public class PatientReservationActivity extends AppCompatActivity {
         }
 
         if(btn_previous_step.isEnabled()){
-            btn_previous_step.setBackgroundResource(R.color.colorPrimary);
+            btn_previous_step.setBackgroundResource(R.color.teal);
         }
         else
         {

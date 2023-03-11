@@ -1,6 +1,7 @@
 package synowiec.application.patient;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.MemoryPolicy;
@@ -36,6 +38,7 @@ import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.MyTreatmentsAdapter;
 import synowiec.application.helpers.Utils;
 import synowiec.application.model.Appointment;
 import synowiec.application.model.PhysioTreatment;
@@ -49,13 +52,18 @@ import static synowiec.application.helpers.Utils.showProgressBar;
 
 public class PhysioDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText nameET, emailET;
+    private TextView nameTextView , emailTextView , locationTextView ;
     private Button backBTN, appointmentBTN;
     private ListView treatmentLV;
     private ArrayAdapter<String> adapter;
     private Physiotherapist receivedPhysiotherapist;
     private ArrayList<String> treatmentNameList = new ArrayList<>();
+    private List<Treatment> currentTreatment;
     private List<Appointment> currentAppointments = new ArrayList<>();
+    private LinearLayoutManager layoutManager;
+    private MyTreatmentsAdapter treatmentsAdapter;
+    private RecyclerView treatmentRecyclerView;
+    private Context c;
     CircleImageView profile_image;
     LocalBroadcastManager localBroadcastManager;
 
@@ -75,7 +83,7 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
         backBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.openActivity(PhysioDetailActivity.this, PatientSearchActivity.class);
+         //       Utils.openActivity(PhysioDetailActivity.this, PatientSearchActivity.class);
                 finish();
             }
         });
@@ -96,8 +104,9 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
     private void receiveAndShowData(){
         receivedPhysiotherapist = Utils.receivePhysiotherapist(getIntent(),PhysioDetailActivity.this);
         if(receivedPhysiotherapist !=null){
-            nameET.setText(receivedPhysiotherapist.getName());
-            emailET.setText(receivedPhysiotherapist.getEmail());
+            nameTextView.setText(receivedPhysiotherapist.getName() +" "+ receivedPhysiotherapist.getSurname());
+            emailTextView.setText("Email: " + receivedPhysiotherapist.getEmail());
+            locationTextView.setText("Adres gabinetu: " + receivedPhysiotherapist.getCabinet() + ", " + receivedPhysiotherapist.getCabinet_address());
             Picasso.get().load(receivedPhysiotherapist.getPhoto())
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
@@ -118,6 +127,18 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
         treatmentLV.setFocusable(false);
     }
 
+    private void setupRecyclerView(List<Treatment> currentTreatment) {
+        layoutManager = new LinearLayoutManager(this);
+
+        treatmentsAdapter = new MyTreatmentsAdapter(currentTreatment, c, false, new MyTreatmentsAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick (Treatment treatment,View view, int position){
+            }
+        });
+        treatmentRecyclerView.setAdapter(treatmentsAdapter);
+        treatmentRecyclerView.setLayoutManager(layoutManager);
+    }
+
     private void retrieveTreatment(final String action, String userID) {
 
         RestApi api = Utils.getClient().create(RestApi.class);
@@ -133,11 +154,12 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
                 }
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("RETROFIT", "response : " + response.body().getTreatments());
-                   List<Treatment> currentTreatment = response.body().getTreatments();
+                   currentTreatment = response.body().getTreatments();
                for (int i = 0; i < currentTreatment.size(); i++) {
                    treatmentNameList.add(currentTreatment.get(i).getName());
                 }
                   showTreatmentList();
+               setupRecyclerView(currentTreatment);
                 }else if (!response.isSuccessful()) {
                     showInfoDialog(PhysioDetailActivity.this, "UNSUCCESSFUL",
                             "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
@@ -206,13 +228,16 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
 //    }
 
     private void initializeWidgets(){
-        nameET = findViewById(R.id.name);
-        nameET.setFocusableInTouchMode(false);
-        emailET = findViewById(R.id.email);
-        emailET.setFocusableInTouchMode(false);
+        getSupportActionBar().hide();
+        nameTextView  = findViewById(R.id.name);
+        nameTextView .setFocusableInTouchMode(false);
+        emailTextView  = findViewById(R.id.email);
+        emailTextView .setFocusableInTouchMode(false);
+        locationTextView = findViewById(R.id.location);
         profile_image = findViewById(R.id.profile_image);
         backBTN = findViewById(R.id.btn_back);
         appointmentBTN = findViewById(R.id.btn_appointment);
         treatmentLV = findViewById(R.id.treatmentLV);
+        treatmentRecyclerView = findViewById(R.id.treatment_recycler_view);
     }
 }

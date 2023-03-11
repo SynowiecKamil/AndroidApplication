@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -25,17 +24,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import synowiec.application.MainActivity;
 import synowiec.application.R;
 import synowiec.application.SessionManager;
+import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Patient;
+import synowiec.application.model.Physiotherapist;
 import synowiec.application.patient.PatientDashboardActivity;
 import synowiec.application.patient.PatientLoginActivity;
 import synowiec.application.patient.PatientRegisterActivity;
@@ -49,6 +54,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
     private TextView link_regist;
     private ProgressBar loading;
     private Context c;
+    private List<Physiotherapist> currentPhysio = new ArrayList<>();
     SessionManager sessionManager;
 
     @Override
@@ -86,90 +92,63 @@ public class PhysioLoginActivity extends AppCompatActivity {
         sPassword = password.getText().toString().trim();
 
         if (!sEmail.isEmpty() || !sPassword.isEmpty()) {
-
             RestApi api = Utils.getClient().create(RestApi.class);
-            Call<String> login = api.getPhysioLogin("LOGIN", sEmail, sPassword);
-
-            //    Utils.showProgressBar(mProgressBar);
-
-            login.enqueue(new Callback<String>() {
+            Call<ResponseModel> retrievedData;
+            retrievedData = api.getPhysioLogin("LOGIN", sEmail, sPassword);
+            retrievedData.enqueue(new Callback<ResponseModel>() {
                 @Override
-                public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-
-                    if(response == null || response.body() == null ){
-                        showInfoDialog(PhysioLoginActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
+                        response) {
+                    if (response == null || response.body() == null) {
+                        showInfoDialog(PhysioLoginActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
                         return;
                     }
-
-                    Log.d("RETROFIT", "response : " + response.body().toString());
-                    String myResponse = response.body().toString();
-
                     if (response.isSuccessful() && response.body() != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(myResponse);
-                            JSONArray jsonArray = jsonObject.getJSONArray("result");
-
-                            for (int i = 0; i < jsonArray.length(); i++) {
-
-                                JSONObject object = jsonArray.getJSONObject(i);
-
-                                String name = object.getString("name").trim();
-                                String email = object.getString("email").trim();
-                                String id = object.getString("id").trim();
-                                String photo = object.getString("photo").trim();
-                                String surname = object.getString("surname").trim();
-                                String profession_number = object.getString("profession_number").trim();
-                                String cabinet = object.getString("cabinet").trim();
-                                String description = object.getString("description").trim();
-
-                                sessionManager.createSession(id, name, email, photo, surname, profession_number, cabinet, description);
+                        currentPhysio = response.body().getResult();
+                        for (int i = 0; i < currentPhysio.size(); i++) {
+                            Utils.currentPhysio = currentPhysio.get(i);
+                                sessionManager.createSession(currentPhysio.get(i).getId(), currentPhysio.get(i).getName(), currentPhysio.get(i).getEmail(), currentPhysio.get(i).getPhoto(),
+                                        currentPhysio.get(i).getSurname(), currentPhysio.get(i).getProfession_number(), currentPhysio.get(i).getCabinet(), currentPhysio.get(i).getDescription(),
+                                        currentPhysio.get(i).getCabinet_address(), currentPhysio.get(i).getDays(), currentPhysio.get(i).getHours());
                                 Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
-                                intent.putExtra("name", name);
-                                intent.putExtra("email", email);
-                                intent.putExtra("photo", photo);
-                                intent.putExtra("surname", surname);
-                                intent.putExtra("profession_number", profession_number);
-                                intent.putExtra("cabinet", cabinet);
-                                intent.putExtra("description", description);
+                                intent.putExtra("name", currentPhysio.get(i).getName());
+                                intent.putExtra("email", currentPhysio.get(i).getEmail());
+                                intent.putExtra("id", currentPhysio.get(i).getId());
+                                intent.putExtra("photo", currentPhysio.get(i).getPhoto());
+                                intent.putExtra("surname", currentPhysio.get(i).getSurname());
+                                intent.putExtra("profession_number", currentPhysio.get(i).getProfession_number());
+                                intent.putExtra("cabinet", currentPhysio.get(i).getCabinet());
+                                intent.putExtra("description", currentPhysio.get(i).getDescription());
+                                intent.putExtra("cabinet_address", currentPhysio.get(i).getCabinet_address());
+                                intent.putExtra("days", currentPhysio.get(i).getDays());
+                                intent.putExtra("days", currentPhysio.get(i).getHours());
                                 startActivity(intent);
                                 finish();
-
                                 loading.setVisibility(View.GONE);
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            loading.setVisibility(View.GONE);
-                            btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(PhysioLoginActivity.this, "Bląd! Błędne dane logowania ", Toast.LENGTH_SHORT).show();
                         }
                     } else if (!response.isSuccessful()) {
                         showInfoDialog(PhysioLoginActivity.this, "UNSUCCESSFUL",
-                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
-                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
+                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE" +
+                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: " + " " +
                                         " \n 3. Most probably the problem is with your PHP Code.");
                     }
-                    //       hideProgressBar(mProgressBar);
                 }
+
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<ResponseModel> call, Throwable t) {
                     Log.d("RETROFIT", "ERROR: " + t.getMessage());
-                    //     hideProgressBar(mProgressBar);
-                    showInfoDialog(PhysioLoginActivity.this, "FAILURE",
-                            "FAILURE THROWN DURING INSERT."+
-                                    " ERROR Message: " + t.getMessage());
+                    showInfoDialog(PhysioLoginActivity.this, "ERROR", t.getMessage());
                 }
             });
         } else {
             email.setError("Proszę wprowadź email");
             password.setError("Proszę wprowadź hasło");
         }
-
     }
 
 
     private void initializeWidgets(){
+        getSupportActionBar().hide();
         sessionManager = new SessionManager(this);
         c = PhysioLoginActivity.this;
         loading = findViewById(R.id.loading);

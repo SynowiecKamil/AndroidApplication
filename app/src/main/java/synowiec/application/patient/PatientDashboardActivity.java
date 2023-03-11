@@ -1,9 +1,14 @@
 package synowiec.application.patient;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
@@ -14,9 +19,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +40,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.squareup.picasso.MemoryPolicy;
@@ -85,6 +101,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
     private Context c = PatientDashboardActivity.this;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,9 +128,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
         btn_my_appointments.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                openActivity(c, PatientAppointmentsActivity.class);
-            }
+            public void onClick(View v) { openActivity(c, PatientAppointmentsActivity.class);}
         });
 
         btn_search_physio.setOnClickListener(new View.OnClickListener() {
@@ -136,11 +151,52 @@ public class PatientDashboardActivity extends AppCompatActivity {
                         .setTitle("Ostrzeżenie")
                         .setMessage("Czy na pewno chcesz usunąć konto? Zmiany będą nieodwracalne.")
                         .setPositiveButton("NIE", x -> {})
+                        .setButtonsColor(Color.BLACK)
                         .setNegativeButton("TAK", x -> deleteUser())
                         .show();
             }
         });
 
+    }
+    private void initializeDialogMap(LatLng pos){
+        Dialog dialog = new Dialog(c);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        /////make map clear
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+        dialog.setContentView(R.layout.layout_dialog_map);////your custom content
+
+        MapView mMapView = (MapView) dialog.findViewById(R.id.mapView);
+        MapsInitializer.initialize(c);
+
+        mMapView.onCreate(dialog.onSaveInstanceState());
+        mMapView.onResume();
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final GoogleMap googleMap) {
+                googleMap.addMarker(new MarkerOptions().position(pos).title("Lokalizacja gabinetu"));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+                //    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+            }
+        });
+        dialog.show();
+    }
+
+    private LatLng getLatLng(String myAddress){
+        Geocoder geocoder = new Geocoder(c);
+        LatLng latLng = null;
+        try {
+            List<Address> addressList = geocoder.getFromLocationName(myAddress, 1);
+            if(addressList != null){
+                double lat = addressList.get(0).getLatitude();
+                double lng = addressList.get(0).getLongitude();
+                latLng = new LatLng(lat,lng);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return latLng;
     }
 
     @Override
@@ -152,6 +208,12 @@ public class PatientDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sessionManager.logout("patient");
     }
 
     @Override
@@ -208,6 +270,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
                 email.setFocusable(false);
                 surname.setFocusable(false);
 
+                Utils.hideSoftKeyboard(PatientDashboardActivity.this);
                 return true;
 
             default:
@@ -460,6 +523,23 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
         user = sessionManager.getUserDetail("patient");
         getId = user.get(sessionManager.ID);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
     }
 
 }

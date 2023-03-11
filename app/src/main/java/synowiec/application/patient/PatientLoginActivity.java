@@ -157,6 +157,7 @@ public class PatientLoginActivity extends AppCompatActivity {
     }
 
     private void initializeWidgets(){
+        getSupportActionBar().hide();
         sessionManager = new SessionManager(this);
         loading = findViewById(R.id.loading);
         email = findViewById(R.id.email);

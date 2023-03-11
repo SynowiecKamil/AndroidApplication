@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/patient_appointments_linear_layout"
     tools:context=".patient.PatientAppointmentsActivity"
+    android:background="@color/teal"
     android:orientation="vertical">
 
     <LinearLayout
-        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -16,18 +17,20 @@
     <Button
         android:id="@+id/btn_past"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_weight="1"
         android:text="Minione"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
     <Button
         android:id="@+id/btn_next"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_weight="1"
         android:text="Przyszłe"
-        android:backgroundTint="@color/colorPrimary2"/>
+        android:backgroundTint="@color/teal"
+        android:textSize="16dp"/>
 
 
     </LinearLayout>
@@ -35,7 +38,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/app_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

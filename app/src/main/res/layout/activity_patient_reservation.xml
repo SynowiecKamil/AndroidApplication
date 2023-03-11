@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary2"
+    android:background="@color/mint"
     tools:context=".patient.PatientReservationActivity">
 
     <com.shuhart.stepview.StepView
@@ -16,15 +16,15 @@
         android:layout_marginTop="12dp"
         android:padding="16dp"
         app:sv_animationType="None"
-        app:sv_doneCircleColor="@color/colorAccent"
-        app:sv_doneStepLineColor="@color/colorAccent"
-        app:sv_doneStepMarkColor="@color/colorPrimary"
-        app:sv_nextStepLineColor="@color/colorAccent"
-        app:sv_nextTextColor="@color/colorAccent"
-        app:sv_selectedCircleColor="@color/colorAccent"
+        app:sv_doneCircleColor="@color/tealgreen"
+        app:sv_doneStepLineColor="@color/tealgreen"
+        app:sv_doneStepMarkColor="@color/colorTextBright"
+        app:sv_nextStepLineColor="@color/tealgreen"
+        app:sv_nextTextColor="@color/colorTextDark"
+        app:sv_selectedCircleColor="@color/tealgreen"
         app:sv_selectedCircleRadius="12dp"
-        app:sv_selectedStepNumberColor="@color/colorPrimary"
-        app:sv_selectedTextColor="@color/colorAccent"
+        app:sv_selectedStepNumberColor="@color/colorTextBright"
+        app:sv_selectedTextColor="@color/tealgreen"
         app:sv_stepPadding="12dp" />
 
     <androidx.viewpager.widget.ViewPager
@@ -37,30 +37,34 @@
         android:id="@+id/layout_button"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:padding="4dp"
+        android:layout_margin="8dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/btn_previous_step"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:enabled="false"
-
             android:text="Cofnij"
-            android:textColor="@color/colorText" />
+            android:background="@drawable/square_button"
+            android:backgroundTint="@color/tealgreen"
+            android:textSize="14dp" />
 
         <Button
             android:id="@+id/btn_next_step"
             android:enabled="false"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+
+            android:layout_marginLeft="10dp"
             android:layout_centerHorizontal="true"
             android:text="Dalej"
-            android:textColor="@color/colorText" />
+            android:background="@drawable/square_button"
+            android:textSize="14dp" />
         </LinearLayout>
 
 

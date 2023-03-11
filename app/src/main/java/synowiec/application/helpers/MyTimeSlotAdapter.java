@@ -23,6 +23,7 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
     Context context;
     List<String> timeSlotList;
     List<CardView> cardViewList;
+    int firstHourPosition;
     LocalBroadcastManager localBroadcastManager;
 
     public MyTimeSlotAdapter(Context context) {
@@ -32,11 +33,12 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
         this.localBroadcastManager = LocalBroadcastManager.getInstance(context);
     }
 
-    public MyTimeSlotAdapter(Context context, List<String> timeSlotList) {
+    public MyTimeSlotAdapter(Context context, List<String> timeSlotList, int firstHourPosition) {
         this.context = context;
         this.timeSlotList = timeSlotList;
         cardViewList = new ArrayList<>();
         this.localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        this.firstHourPosition = firstHourPosition;
     }
 
 
@@ -51,7 +53,7 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
-        myViewHolder.txt_time_slot.setText(new StringBuilder(Utils.convertTimeSlotToString(position)).toString());
+        myViewHolder.txt_time_slot.setText(new StringBuilder(Utils.convertTimeSlotToString(position + firstHourPosition)).toString());
 
             myViewHolder.card_time_slot.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
             myViewHolder.txt_time_slot_description.setText("Dostępne");
@@ -81,7 +83,7 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
                             cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
                         }
                     }
-                    myViewHolder.card_time_slot.setCardBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+                    myViewHolder.card_time_slot.setCardBackgroundColor(context.getResources().getColor(R.color.tealgreen));
 
                     Intent intent = new Intent(Utils.KEY_ENABLE_BUTTON_NEXT);
                     intent.putExtra(Utils.KEY_TIME_SLOT, pos);

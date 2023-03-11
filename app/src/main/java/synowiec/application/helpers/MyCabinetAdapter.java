@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +26,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
@@ -39,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import synowiec.application.R;
+
 
 public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.PredictionHolder> implements Filterable {
 
@@ -92,7 +95,7 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
 
     @Override
     public void onBindViewHolder(@NonNull PredictionHolder mPredictionHolder, final int i) {
-    mPredictionHolder.address.setText(mResultList.get(i).address);
+   // mPredictionHolder.address.setText(mResultList.get(i).address);
     mPredictionHolder.area.setText(mResultList.get(i).area);
     }
 
@@ -101,6 +104,8 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
 
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                .setCountry("PL")
+                .setTypeFilter(TypeFilter.CITIES)
                 .setSessionToken(token)
                 .setQuery(constraint.toString())
                 .build();
@@ -117,7 +122,7 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
             FindAutocompletePredictionsResponse findAutocompletePredictionsResponse = autocompletePredictions.getResult();
             if(findAutocompletePredictionsResponse != null)
                 for(AutocompletePrediction prediction: findAutocompletePredictionsResponse.getAutocompletePredictions()){
-                    resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(STYLE_NORMAL).toString(), prediction.getFullText(STYLE_BOLD).toString()));
+                    resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(STYLE_NORMAL).toString()));
                 }
             return resultList;
         }else{
@@ -140,7 +145,7 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
         PredictionHolder(View itemView){
             super(itemView);
             area = itemView.findViewById(R.id.place_area);
-            address = itemView.findViewById(R.id.place_address);
+//            address = itemView.findViewById(R.id.place_address);
             mRow = itemView.findViewById(R.id.place_item_view);
             itemView.setOnClickListener(this);
         }
@@ -172,12 +177,11 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
 
     public class PlaceAutocomplete {
         public CharSequence placeId;
-        public CharSequence address, area;
+        public CharSequence area;
 
-        PlaceAutocomplete(CharSequence placeId, CharSequence area, CharSequence address){
+        PlaceAutocomplete(CharSequence placeId, CharSequence area){
             this.placeId = placeId;
             this.area = area;
-            this.address = address;
         }
 
         @Override

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +17,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +64,8 @@ public class ReservationConfirmFragment extends Fragment {
     TextView txt_time;
     @BindView(R.id.txt_place)
     TextView txt_place;
+    @BindView(R.id.txt_price)
+    TextView txt_price;
     @BindView(R.id.btn_confirm)
     Button btn_confirm;
 
@@ -72,9 +79,11 @@ public class ReservationConfirmFragment extends Fragment {
         appointment.setDate(simpleDateFormat.format(Utils.currentDate.getTime()));
         appointment.setPlace(Utils.currentPhysio.getCabinet());
         appointment.setTreatment(Utils.currentTreatment);
+        appointment.setCabinet_address(Utils.currentPhysio.getCabinet_address());
+        appointment.setPrice(Utils.currentPrice);
 
         // send data to DB
-        insertAppointment(appointment.getPhysio_id(), appointment.getPatient_id(), appointment.getDate(), appointment.getTime(), appointment.getPlace(), appointment.getTreatment());
+        insertAppointment(appointment.getPhysio_id(), appointment.getPatient_id(), appointment.getDate(), appointment.getTime(), appointment.getPlace(), appointment.getTreatment(), appointment.getCabinet_address(), appointment.getPrice());
     }
 
     BroadcastReceiver confirmBookingReceiver = new BroadcastReceiver() {
@@ -91,13 +100,14 @@ public class ReservationConfirmFragment extends Fragment {
         txt_treatment.setText(Utils.currentTreatment);
         txt_time.setText(new StringBuilder(Utils.convertTimeSlotToString(Utils.currentTimeSlot)));
         txt_date.setText(displayDateFormat.format(Utils.currentDate.getTime()));
-        txt_place.setText(Utils.currentPhysio.getCabinet());
+        txt_place.setText(Utils.currentPhysio.getCabinet()+", "+Utils.currentPhysio.getCabinet_address());
+        txt_price.setText(String.valueOf(Utils.currentPrice) + " zł");
     }
 
-    private void insertAppointment(String physioId, String patientId, String date, String time, String place, String treatment){
+    private void insertAppointment(String physioId, String patientId, String date, String time, String place, String treatment, String cabinet_address, double price){
 
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> insertData = api.insertAppointment("INSERT", physioId, patientId, date, time, place, treatment);
+        Call<ResponseModel> insertData = api.insertAppointment("INSERT", physioId, patientId, date, time, place, treatment, cabinet_address, price);
 
         //    Utils.showProgressBar(mProgressBar);
 
@@ -144,6 +154,7 @@ public class ReservationConfirmFragment extends Fragment {
         Utils.currentPhysio = null;
         Utils.currentTimeSlot = -1;
         Utils.currentTreatment = null;
+        Utils.currentPrice = -1;
     }
 
     static ReservationConfirmFragment instance;
@@ -151,6 +162,25 @@ public class ReservationConfirmFragment extends Fragment {
         if(instance == null)
             instance = new ReservationConfirmFragment();
         return instance;
+    }
+
+    public class DecimalDigitsInputFilter implements InputFilter {
+
+        Pattern mPattern;
+
+        public DecimalDigitsInputFilter(int digitsBeforeZero,int digitsAfterZero) {
+            mPattern= Pattern.compile("[0-9]{0," + (digitsBeforeZero-1) + "}+((\\.[0-9]{0," + (digitsAfterZero-1) + "})?)||(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            Matcher matcher=mPattern.matcher(dest);
+            if(!matcher.matches())
+                return "";
+            return null;
+        }
+
     }
 
     @Override

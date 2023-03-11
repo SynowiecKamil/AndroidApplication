@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mint"
     tools:context=".patient.PatientDashboardActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -17,12 +18,14 @@
 
     <Button
         android:id="@+id/btn_photo"
-        style="@style/Widget.AppCompat.ActionButton.CloseMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
         android:layout_below="@+id/profile_image"
         android:layout_centerHorizontal="true"
-        android:text="Edytuj zdjęcie profilowe" />
+        android:text="Edytuj zdjęcie profilowe"
+        android:background="@drawable/square_button"
+        android:textSize="10dp"/>
 
     <ProgressBar
         android:id="@+id/mProgressBarSave"
@@ -33,6 +36,7 @@
     <LinearLayout
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:layout_marginTop="18dp"
         android:layout_below="@id/btn_photo"
         android:weightSum="2"
         android:id="@+id/layout_text1"
@@ -107,51 +111,54 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/colorPrimary"
         android:text="Wyloguj"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
     <Button
         android:id="@+id/btn_my_appointments"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_above="@+id/btn_search_physio"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/square_button"
         android:text="Moje wizyty"
-        android:textColor="@android:color/white" />
+        android:textSize="16dp" />
 
     <Button
         android:id="@+id/btn_search_physio"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_above="@+id/btn_logout"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="12dp"
         android:text="Znajdź fizjoterapeutę"
-        android:textColor="@android:color/white" />
+        android:background="@drawable/square_button"
+        android:textSize="16dp"/>
 
     <Button
         android:id="@+id/btn_delete_user"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/layout_text3"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="15dp"
-        android:backgroundTint="@color/colorPrimary"
         android:text="Usuń konto"
         android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
 
 </RelativeLayout>

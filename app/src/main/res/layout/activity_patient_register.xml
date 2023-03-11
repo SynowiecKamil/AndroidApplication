@@ -9,7 +9,7 @@
     android:paddingLeft="30dp"
     android:paddingRight="30dp"
     android:paddingTop="80dp"
-    android:background="@color/colorPrimary2"
+    android:background="@color/mint"
     tools:context=".patient.PatientRegisterActivity">
 
     <TextView
@@ -17,19 +17,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Rejestracja pacjenta"
-        android:textSize="24sp" />
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="@color/colorTextDark"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/name"
+            android:hint="Imię"
+            android:inputType="textPersonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/colorTextDark"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:id="@+id/name"
-            android:hint="Imie"
+            android:id="@+id/surname"
+            android:hint="Nazwisko"
             android:inputType="textPersonName"
-            android:textColor="@color/colorText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/colorTextDark"/>
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -38,7 +56,7 @@
             android:id="@+id/email"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorTextDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -51,7 +69,7 @@
             android:id="@+id/password"
             android:hint="Hasło"
             android:inputType="textPassword"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorTextDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -63,9 +81,9 @@
         app:passwordToggleEnabled="true">
         <EditText
             android:id="@+id/c_password"
-            android:hint="Potwierdz hasło"
+            android:hint="Potwierdź hasło"
             android:inputType="textPassword"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorTextDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -79,20 +97,23 @@
 
     <Button
         android:id="@+id/btn_regist"
-        android:backgroundTint="@color/colorPrimary"
         android:textColor="@android:color/white"
-        android:text="REJESTRUJ"
+        android:text="Zarejestruj"
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
-        android:layout_height="55dp" />
+        android:layout_height="55dp"
+        android:background="@drawable/square_button"
+        android:textSize="16dp"/>
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_marginTop="30dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="15dp"
         android:text="Powrót do logowania"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
 </LinearLayout>

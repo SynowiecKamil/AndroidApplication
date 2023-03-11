@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +76,7 @@ public class ReservationCalendarFragment extends Fragment implements ITimeSlotLo
         // get appointmentList
         appointmentList = (List<Appointment>) i.getSerializableExtra("APPOINTMENT_KEY");
         System.out.println("Appointment list: " + appointmentList);
-
+        System.out.println("currentPhysio:  " + receivedPhysiotherapist.toString());
         simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
      }
 
@@ -109,18 +111,24 @@ public class ReservationCalendarFragment extends Fragment implements ITimeSlotLo
     private void loadAvailableTimeSlotOfPhysio(String date){
 
             ArrayList<String> appointmentTimeList = new ArrayList<>();
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE");
-            if( dateFormat.format(choose_date.getTime()).equals("sob.") || dateFormat.format(choose_date.getTime()).equals("niedz.")){
-                Collections.addAll(appointmentTimeList, "0","1", "2", "3", "4", "5", "6","7");
-                System.out.println("appoi time list: "+ appointmentTimeList);
-            }else {
+            String currentHours = Utils.currentPhysio.getHours();
+            currentHours.substring(0, currentHours.length() - 1);
+            String[] parts = currentHours.split(",");
+            Utils.TIME_SLOT_TOTAL = parts.length;
+            if(     (dateFormat.format(choose_date.getTime()).equals("pon.") && !Utils.currentPhysio.getDays().contains("0")) || (dateFormat.format(choose_date.getTime()).equals("wt.") && !Utils.currentPhysio.getDays().contains("1")) ||
+                    (dateFormat.format(choose_date.getTime()).equals("śr.") && !Utils.currentPhysio.getDays().contains("2")) || (dateFormat.format(choose_date.getTime()).equals("czw.") && !Utils.currentPhysio.getDays().contains("3")) ||
+                    (dateFormat.format(choose_date.getTime()).equals("pt.") && !Utils.currentPhysio.getDays().contains("4")) || (dateFormat.format(choose_date.getTime()).equals("sob.") && !Utils.currentPhysio.getDays().contains("5")) ||
+                    (dateFormat.format(choose_date.getTime()).equals("niedz.") && !Utils.currentPhysio.getDays().contains("6"))){
+                Collections.addAll(appointmentTimeList, "0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12", "13");
+            }else{
                 for (Appointment appointment : appointmentList) {
                     if (appointment.getDate().equals(date))
                         appointmentTimeList.add(appointment.getTime());
                 }
             }
-            if(appointmentTimeList != null) onTimeSlotLoadSuccess(appointmentTimeList);
+        System.out.println(appointmentTimeList.toString());
+            if(appointmentTimeList != null) onTimeSlotLoadSuccess(appointmentTimeList, Integer.parseInt(parts[0]));
             else onTimeSlotLoadEmpty();
     }
 
@@ -175,8 +183,8 @@ public class ReservationCalendarFragment extends Fragment implements ITimeSlotLo
 
 
     @Override
-    public void onTimeSlotLoadSuccess(List<String> timeSlotList) {
-        adapter = new MyTimeSlotAdapter(getContext(), timeSlotList);
+    public void onTimeSlotLoadSuccess(List<String> timeSlotList, int firstHourPosition) {
+        adapter = new MyTimeSlotAdapter(getContext(), timeSlotList, firstHourPosition);
         recycler_time_slot.setAdapter(adapter);
 
     }

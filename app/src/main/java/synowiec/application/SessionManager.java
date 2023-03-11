@@ -28,6 +28,9 @@ public class SessionManager {
     public static final String PROFESSION_NUMBER = "PROFESSION_NUMBER";
     public static final String CABINET = "CABINET";
     public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String CABINET_ADDRESS = "CABINET_ADDRESS";
+    public static final String DAYS = "DAYS";
+    public static final String HOURS = "HOURS";
 
     public SessionManager(Context context) {
         this.context = context;
@@ -35,7 +38,7 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    public void createSession(String id, String name, String email, String photo, String surname, String profession_number, String cabinet, String description){
+    public void createSession(String id, String name, String email, String photo, String surname, String profession_number, String cabinet, String description, String cabinet_address, String days, String hours){
 
         editor.putBoolean(LOGIN, true);
         editor.putString(NAME, name);
@@ -46,6 +49,9 @@ public class SessionManager {
         editor.putString(PROFESSION_NUMBER, profession_number);
         editor.putString(CABINET, cabinet);
         editor.putString(DESCRIPTION, description);
+        editor.putString(CABINET_ADDRESS, cabinet_address);
+        editor.putString(DAYS, days);
+        editor.putString(HOURS, hours);
         editor.apply();
 
     }
@@ -96,6 +102,9 @@ public class SessionManager {
             user.put(PROFESSION_NUMBER, sharedPreferences.getString(PROFESSION_NUMBER, null));
             user.put(CABINET, sharedPreferences.getString(CABINET, null));
             user.put(DESCRIPTION, sharedPreferences.getString(DESCRIPTION, null));
+            user.put(CABINET_ADDRESS, sharedPreferences.getString(CABINET_ADDRESS, null));
+            user.put(DAYS, sharedPreferences.getString(DAYS, null));
+            user.put(HOURS, sharedPreferences.getString(HOURS, null));
         }else if(userType.equals("patient")){
             user.put(ID, sharedPreferences.getString(ID, null));
             user.put(NAME, sharedPreferences.getString(NAME, null));

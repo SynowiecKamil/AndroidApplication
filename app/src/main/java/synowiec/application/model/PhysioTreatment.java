@@ -11,6 +11,8 @@ public class PhysioTreatment implements Serializable {
     private String physioID;
     @SerializedName("treatmentID")
     private String treatmentID;
+    @SerializedName("price")
+    private double price;
 
 
     public PhysioTreatment(String id, String physioID, String treatmentID) {
@@ -42,4 +44,10 @@ public class PhysioTreatment implements Serializable {
     public void setTreatmentID(String treatmentID) {
         this.treatmentID = treatmentID;
     }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) { this.price = price; }
 }

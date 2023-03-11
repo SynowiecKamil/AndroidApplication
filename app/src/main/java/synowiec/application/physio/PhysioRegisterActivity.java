@@ -2,36 +2,29 @@ package synowiec.application.physio;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Patient;
+import synowiec.application.model.Physiotherapist;
 import synowiec.application.patient.PatientRegisterActivity;
 
 import static synowiec.application.helpers.Utils.show;
@@ -39,8 +32,9 @@ import static synowiec.application.helpers.Utils.showInfoDialog;
 
 public class PhysioRegisterActivity extends AppCompatActivity {
 
-    private EditText nameET, emailET, passwordET, c_passwordET;
-    private Button btn_regist, btn_login;
+    private EditText nameET, surnameET, emailET, passwordET, c_passwordET;
+    private Button btnRegister, btnLogin;
+    private List<Physiotherapist> physiotherapistList = null;
     private ProgressBar loading;
     private Context c = PhysioRegisterActivity.this;
 
@@ -50,11 +44,11 @@ public class PhysioRegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_physio_register);
         this.initializeWidgets();
 
-        btn_regist.setOnClickListener(new View.OnClickListener() {
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {insertData();}
         });
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(PhysioRegisterActivity.this, PhysioLoginActivity.class));
@@ -63,89 +57,31 @@ public class PhysioRegisterActivity extends AppCompatActivity {
 
     }
 
-//    private void Regist(){
-//        loading.setVisibility(View.VISIBLE);
-//        btn_regist.setVisibility(View.GONE);
-//        name = findViewById(R.id.name);
-//        email = findViewById(R.id.email);
-//        password = findViewById(R.id.password);
-//        c_password = findViewById(R.id.c_password);
-//        final String sName = this.name.getText().toString().trim();
-//        final String sEmail = this.email.getText().toString().trim();
-//        final String sPassword = this.password.getText().toString().trim();
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_REGIST,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try{
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            String success = jsonObject.getString("success");
-//
-//                            if (success.equals("1")) {
-//                                Toast.makeText(PhysioRegisterActivity.this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show();
-//                                loading.setVisibility(View.GONE);
-//                                btn_login.setVisibility(View.VISIBLE);
-//                                btn_regist.setVisibility(View.GONE);
-//                            }else if(success.equals("0")){
-//                                loading.setVisibility(View.GONE);
-//                                btn_regist.setVisibility(View.VISIBLE);
-//                                name.setError(null);
-//                                password.setError(null);
-//                                c_password.setError(null);
-//                                email.getText().clear();
-//                                email.setError("Wprowadz poprawny email");
-//                                Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji, istnieje użytkownik o tym adresie email ", Toast.LENGTH_SHORT).show();
-//                            }
-//
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji! " + e.toString(), Toast.LENGTH_SHORT).show();
-//                            loading.setVisibility(View.GONE);
-//                            btn_regist.setVisibility(View.VISIBLE);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(PhysioRegisterActivity.this, "Błąd rejestracji! " + error.toString(), Toast.LENGTH_SHORT).show();
-//                        loading.setVisibility(View.GONE);
-//                        btn_regist.setVisibility(View.VISIBLE);
-//                    }
-//                })
-//
-//        {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("name", sName);
-//                params.put("email", sEmail);
-//                params.put("password", sPassword);
-//                return params;
-//            }
-//        };
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        requestQueue.add(stringRequest);
-//
-//
-//    }
-
     /**
-     insert data typed in this page into the database
+     insert data into database
      */
     private void insertData() {
-        String sName, sEmail, sPassword, sC_password;
+        String sName, sSurname, sEmail, sPassword, sC_password;
         sName = nameET.getText().toString();
+        sSurname = surnameET.getText().toString();
         sEmail = emailET.getText().toString();
         sPassword = passwordET.getText().toString();
         sC_password = c_passwordET.getText().toString();
-        if (!sEmail.isEmpty() && !sPassword.isEmpty() && !sName.isEmpty() && sC_password.equals(sPassword)) {
+        checkEmail(sEmail);
+        if(sEmail.isEmpty() || sName.isEmpty() || sSurname.isEmpty() || sPassword.isEmpty() || sC_password.isEmpty()){
+            showInfoDialog(PhysioRegisterActivity.this, "Błąd rejestracji! ","Przynajmniej jedno wymagane pole jest puste! ");
+        }else if (physiotherapistList == null) {
+            showInfoDialog(PhysioRegisterActivity.this, "Błąd rejestracji! ", "Podany email już istnieje! ");
+            emailET.setError("Podany email już istnieje!");
+        }
+        else if(!sC_password.equals(sPassword)){
+            showInfoDialog(PhysioRegisterActivity.this, "Błąd rejestracji! ","Wpisane hasła nie są takie same! ");
+            passwordET.setError("Hasła nie są takie same!");
+            c_passwordET.setError("Hasła nie są takie same!");
+        }else if (!sEmail.isEmpty() && !sPassword.isEmpty() && !sName.isEmpty() && !sSurname.isEmpty() && sC_password.equals(sPassword)) {
 
             RestApi api = Utils.getClient().create(RestApi.class);
-            Call<ResponseModel> insertData = api.insertPhysioData("INSERT", sName, sEmail, sPassword);
+            Call<ResponseModel> insertData = api.insertPhysioData("INSERT", sName, sSurname, sEmail, sPassword);
 
             //    Utils.showProgressBar(mProgressBar);
 
@@ -163,10 +99,16 @@ public class PhysioRegisterActivity extends AppCompatActivity {
 
                     if (myResponseCode.equals("1")) {
                         System.out.printf("SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: "  +myResponseCode);
-                        show(c, "Zarejestrowano pomyślnie!");
-                        btn_regist.setVisibility(View.GONE);
-                        btn_login.setVisibility(View.VISIBLE);
-                        //       Utils.openActivity(c, ScientistsActivity.class);
+                        showInfoDialog(PhysioRegisterActivity.this,"Gratulacje", "Pomyślnie zarejestrowano użytkownika");
+                        nameET.getText().clear();
+                        emailET.getText().clear();
+                        surnameET.getText().clear();
+                        passwordET.getText().clear();
+                        c_passwordET.getText().clear();
+                       // getCurrentFocus().clearFocus();
+                        btnRegister.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
+
                     } else if (myResponseCode.equalsIgnoreCase("2")) {
                         showInfoDialog(PhysioRegisterActivity.this, "UNSUCCESSFUL",
                                 "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
@@ -186,22 +128,62 @@ public class PhysioRegisterActivity extends AppCompatActivity {
                                     " ERROR Message: " + t.getMessage());
                 }
             });
-        }else if(sEmail.isEmpty() || sName.isEmpty() || sPassword.isEmpty() || sC_password.isEmpty()){
-            showInfoDialog(PhysioRegisterActivity.this, "Błąd rejestracji! ","Przynajmniej jedno wymagane pole jest puste! ");
-        }else if(!sC_password.equals(sPassword)){
-            showInfoDialog(PhysioRegisterActivity.this, "Błąd rejestracji! ","Wpisane hasła nie są takie same! ");
         }
     }
 
+    private void checkEmail(String email){
+        RestApi api = Utils.getClient().create(RestApi.class);
+        Call<ResponseModel> retrievedData;
+        retrievedData = api.checkPhysioEmail("CHECK_EMAIL", email);
+        retrievedData.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
+                    response) {
+                if (response == null || response.body() == null) {
+                    showInfoDialog(PhysioRegisterActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
+                    return;
+                }
+                if (response.isSuccessful() && response.body() != null) {
+                    physiotherapistList = response.body().getResult();
+                } else if (!response.isSuccessful()) {
+                    physiotherapistList = response.body().getResult();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d("RETROFIT", "ERROR: " + t.getMessage());
+                showInfoDialog(PhysioRegisterActivity.this, "ERROR", t.getMessage());
+            }
+        });
+    }
+
     private void initializeWidgets(){
+        getSupportActionBar().hide();
         loading = findViewById(R.id.loading);
         nameET = findViewById(R.id.name);
+        surnameET = findViewById(R.id.surname);
         emailET = findViewById(R.id.email);
         passwordET = findViewById(R.id.password);
         c_passwordET = findViewById(R.id.c_password);
-        btn_regist = findViewById(R.id.btn_regist);
-        btn_login = findViewById(R.id.btn_login);
-        btn_login.setVisibility(View.GONE);
+        btnRegister = findViewById(R.id.btn_regist);
+        btnLogin = findViewById(R.id.btn_login);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
     }
 }
 

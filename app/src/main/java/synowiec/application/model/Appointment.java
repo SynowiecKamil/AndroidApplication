@@ -27,6 +27,15 @@ public class Appointment implements Serializable {
     @SerializedName("treatment")
     private String treatment;
 
+    @SerializedName("cabinet_address")
+    private String cabinet_address;
+
+    @SerializedName("description")
+    private String description;
+
+    @SerializedName("price")
+    private double price;
+
     public String getId() { return id; }
 
     public void setId(String id) { this.id = id; }
@@ -55,6 +64,18 @@ public class Appointment implements Serializable {
 
     public void setTreatment(String treatment) { this.treatment = treatment; }
 
+    public String getCabinet_address() {        return cabinet_address;    }
+
+    public void setCabinet_address(String cabinet_address) {        this.cabinet_address = cabinet_address;    }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public double getPrice() { return price; }
+
+    public void setPrice(double price) { this.price = price; }
+
     @Override
     public String toString() {
         return "Appointment{" +
@@ -65,6 +86,9 @@ public class Appointment implements Serializable {
                 ", time='" + time + '\'' +
                 ", place='" + place + '\'' +
                 ", treatment='" + treatment + '\'' +
+                ", cabinet_address='" + cabinet_address + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
                 '}';
     }
 }

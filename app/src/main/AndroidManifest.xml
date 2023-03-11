@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeRegist"
         android:usesCleartextTraffic="true">
-        <activity android:name=".patient.PatientAppointmentsActivity"></activity>
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y"/>
+        <activity android:name=".patient.PatientAppointmentsActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main">
@@ -24,17 +25,19 @@
         </activity>
         <activity
             android:name=".patient.PatientDashboardActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".patient.PatientReservationActivity"></activity>
-        <activity android:name=".patient.PatientSearchActivity"></activity>
-        <activity android:name=".patient.PhysioDetailActivity"></activity>
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity android:name=".patient.PatientReservationActivity" />
+        <activity android:name=".patient.PatientSearchActivity" />
+        <activity android:name=".patient.PhysioDetailActivity" />
         <activity
             android:name=".physio.PhysioDashboardActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".patient.PatientLoginActivity"></activity>
-        <activity android:name=".physio.PhysioLoginActivity"></activity>
-        <activity android:name=".patient.PatientRegisterActivity"></activity>
-        <activity android:name=".physio.PhysioRegisterActivity"></activity>
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".patient.PatientLoginActivity" />
+        <activity android:name=".physio.PhysioLoginActivity" />
+        <activity android:name=".patient.PatientRegisterActivity" />
+        <activity android:name=".physio.PhysioRegisterActivity" />
+        <activity android:name=".physio.PhysioAppointmentsActivity" />
     </application>
 
 </manifest>

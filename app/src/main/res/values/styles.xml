@@ -13,14 +13,25 @@
     <style name="AppThemeLogin.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppThemeLogin.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="buttonStyle" parent="android:Widget.Button">
+        <item name="android:textColor">@color/colorTextBright</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">"sans-serif-medium"</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="AppThemeRegist" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary2</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark2</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/tealgreen</item>
+        <item name="colorPrimaryDark">@color/spearmint</item>
+        <item name="colorAccent">@color/teal</item>
         <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
         <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="android:buttonStyle">@style/buttonStyle</item>
+        <item name="buttonStyle">@style/buttonStyle</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="Widget.Styled.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
@@ -31,4 +42,21 @@
     <style name="AppThemeRegist.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppThemeRegist.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="dialog_theme">
+        <item name="android:windowBackground">@drawable/shadow</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/tealgreen</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/teal</item>
+    </style>
 </resources>

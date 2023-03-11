@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="mint">#DDFFE7</color>
+    <color name="spearmint">#98D7C2</color>
+    <color name="tealgreen">#167D7F</color>
+    <color name="teal">#29A0B1</color>
+
+    <color name="colorTextBright">#ffffff</color>
+    <color name="colorTextDark">#202020</color>
+
+
     <color name="colorPrimary">#d60064</color>
     <color name="colorPrimaryDark">#b30d4d</color>
     <color name="colorAccent">#e1e1e1</color>

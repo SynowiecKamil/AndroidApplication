@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -21,6 +22,7 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class ReservationTreatmentFragment extends Fragment {
     private Physiotherapist receivedPhysiotherapist;
     private String receivedPhysioID;
     private ArrayList<String> treatmentNameList = new ArrayList<>();
+    private List<Treatment> currentTreatment;
 
     @BindView(R.id.spinner)
     MaterialSpinner spinner;
@@ -87,6 +90,11 @@ public class ReservationTreatmentFragment extends Fragment {
             @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                     Intent intent = new Intent(Utils.KEY_ENABLE_BUTTON_NEXT);
                     intent.putExtra(Utils.KEY_TREATMENT_SELECTED, item);
+                    for (int i = 0; i < currentTreatment.size(); i++) {
+                    if(currentTreatment.get(i).getName().equals(item)){
+                        intent.putExtra(Utils.KEY_PRICE_SELECTED, Double.parseDouble(currentTreatment.get(i).getId()));
+                    }
+                    }
                     intent.putExtra(Utils.KEY_STEP, 2);
                     localBroadcastManager.sendBroadcast(intent);
             }
@@ -108,7 +116,7 @@ public class ReservationTreatmentFragment extends Fragment {
                 }
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("RETROFIT", "response : " + response.body().getTreatments());
-                    List<Treatment> currentTreatment = response.body().getTreatments();
+                    currentTreatment = response.body().getTreatments();
                     for (int i = 0; i < currentTreatment.size(); i++) {
                         treatmentNameList.add(currentTreatment.get(i).getName());
                     }

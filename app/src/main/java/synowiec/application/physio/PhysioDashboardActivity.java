@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
@@ -14,14 +15,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +38,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -43,6 +52,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,41 +64,52 @@ import synowiec.application.R;
 import synowiec.application.SessionManager;
 import synowiec.application.controller.ResponseModel;
 import synowiec.application.controller.RestApi;
+import synowiec.application.helpers.MyAppointmentsAdapter;
 import synowiec.application.helpers.MyCabinetAdapter;
+import synowiec.application.helpers.MyTreatmentsAdapter;
 import synowiec.application.helpers.TreatmentDialog;
 import synowiec.application.helpers.Utils;
+import synowiec.application.model.Appointment;
 import synowiec.application.model.Treatment;
 import synowiec.application.patient.PatientDashboardActivity;
 
 import static synowiec.application.helpers.Utils.hideProgressBar;
+import static synowiec.application.helpers.Utils.openActivity;
 import static synowiec.application.helpers.Utils.show;
 import static synowiec.application.helpers.Utils.showInfoDialog;
 import static synowiec.application.helpers.Utils.showProgressBar;
 
 
-public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener, MyCabinetAdapter.ClickListener{
+public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener, MyCabinetAdapter.ClickListener, AdapterView.OnItemSelectedListener {
 
-    private TextView name, email, surname, cabinet, description, profession_number;
-    private String id = null, getId, selectedTreatment;
-    private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment, btn_delete_treatment;
-    private boolean editMode;
+    private EditText name, email, surname, cabinet, description, profession_number, cabinet_address;
+    private TextView info;
+    private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7;
+    private Spinner startHour, endHour;
+    private String getId, selectedStartHour, selectedEndHour;
+    private Button btn_logout, btn_photo_upload, btn_delete_user, btn_add_treatment, btn_delete_treatment, btn_edit_treatment, btn_my_appointments;
+    private boolean editMode = false;
     private HashMap<String, String> user = null;
     SessionManager sessionManager;
     private ProgressBar mProgressBar;
     private Menu action;
     private Bitmap bitmap;
     private View previousView;
-    private ListView treatmentLV;
-    private ArrayList<String> treatmentNameList = new ArrayList<>();
-    private ArrayAdapter<String> adapter;
+    private List<Treatment> currentTreatment;
+    private Treatment selectedT;
+    private List<CheckBox> checkBoxList;
+    private MyTreatmentsAdapter treatmentsAdapter;
+    private LinearLayoutManager layoutManager;
     CircleImageView profile_image;
-    private RecyclerView cabinetRecyclerView;
+    private RecyclerView cabinetRecyclerView, treatmentRecyclerView;
+    private AutoCompleteTextView autocompleteCabinet;
     private Context c = PhysioDashboardActivity.this;
     private MyCabinetAdapter myCabinetAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_physio_dashboard);
         initializeWidgets();
         if(user.containsValue(null) != true) {
@@ -96,15 +117,24 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
             retrieveTreatment("RETRIEVE_TREATMENT", getId);
             initializeCabinetAdapter();
         }
-
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { sessionManager.logout("physio"); }
+            public void onClick(View v) {
+                sessionManager.logout("physio");
+                Utils.currentPhysio = null;
+            }
         });
 
         btn_photo_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { chooseFile(); }
+        });
+
+        btn_my_appointments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openActivity(c, PhysioAppointmentsActivity.class);
+            }
         });
 
         btn_delete_user.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +144,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                  //       .setTopColorRes(R.color.indigo)
                  //       .setButtonsColorRes(R.color.darkDeepOrange)
                         .setTitle("Ostrzeżenie")
+                        .setButtonsColor(Color.BLACK)
                         .setMessage("Czy na pewno chcesz usunąć konto? Zmiany będą nieodwracalne.")
                         .setPositiveButton("NIE", x -> {})
                         .setNegativeButton("TAK", x -> deleteUser())
@@ -124,7 +155,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_add_treatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TreatmentDialog treatmentDialog = new TreatmentDialog(getId);
+                TreatmentDialog treatmentDialog = new TreatmentDialog(getId, getApplicationContext(), "insert");
                 treatmentDialog.show(getSupportFragmentManager(),"treatment dialog");
             }
         });
@@ -132,17 +163,18 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_delete_treatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectedTreatment != null) {
+                if(selectedT != null) {
                     new LovelyStandardDialog(c, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
                             .setMessage("Czy na pewno chcesz usunąć zabieg?")
+                            .setPositiveButtonColor(getResources().getColor(R.color.teal))
+                            .setNegativeButtonColor(getResources().getColor(R.color.tealgreen))
                             .setPositiveButton("NIE", x -> {
                             })
                             .setNegativeButton("TAK", x -> {
-                                deleteTreatment(selectedTreatment);
-                                adapter.remove(selectedTreatment);
-                                adapter.notifyDataSetChanged();
-                                previousView.setBackgroundResource(0);
-                                selectedTreatment = null;
+                                deleteTreatment(selectedT);
+                                currentTreatment.remove(selectedT);
+                                treatmentsAdapter.notifyDataSetChanged();
+                             //   previousView.setBackgroundResource(0);
                             })
                             .show();
                 }else{
@@ -152,28 +184,21 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
             }
         });
 
-        treatmentLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        btn_edit_treatment.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position,
-                                    long arg3) {
-                if(editMode){
-                        if (previousView != null) {
-                            previousView.setBackgroundResource(0);
-                        }
-                        if (view != previousView) {
-                            selectedTreatment = (String) treatmentLV.getItemAtPosition(position);
-                            view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                            previousView = view;
-                            System.out.println(selectedTreatment);
-                        } else {
-                            view.setBackgroundResource(0);
-                            selectedTreatment = null;
-                            previousView = null;
-                        }
-                    }
+            public void onClick(View v) {
+                TreatmentDialog treatmentDialog = new TreatmentDialog(getId, getApplicationContext(), selectedT, "edit");
+                treatmentDialog.show(getSupportFragmentManager(),"treatment dialog");
             }
         });
+
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sessionManager.logout("physiotherapist");
+    }
+
     @Override
     public void onBackPressed() { sessionManager.logout("physiotherapist"); }
 
@@ -204,11 +229,19 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                 profession_number.setFocusableInTouchMode(true);
                 cabinet.setFocusableInTouchMode(true);
                 description.setFocusableInTouchMode(true);
+                cabinet_address.setFocusableInTouchMode(true);
                 btn_photo_upload.setVisibility(View.VISIBLE);
                 btn_delete_user.setVisibility(View.VISIBLE);
                 btn_logout.setVisibility(View.GONE);
+                btn_my_appointments.setVisibility(View.GONE);
                 btn_add_treatment.setVisibility(View.VISIBLE);
                 btn_delete_treatment.setVisibility(View.VISIBLE);
+                startHour.setEnabled(true);
+                endHour.setEnabled(true);
+
+                for (CheckBox checkBox : checkBoxList) {
+                    checkBox.setClickable(true);
+                }
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(name, InputMethodManager.SHOW_IMPLICIT);
@@ -219,34 +252,48 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                 return true;
 
             case R.id.menu_save:
+                if(!getHours(selectedStartHour, selectedEndHour).equals("")) {
+                    editMode = false;
+                    updateData();
+                    if (bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
 
-                editMode=false;
-                updateData();
-                if(bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
+                    action.findItem(R.id.menu_edit).setVisible(true);
+                    action.findItem(R.id.menu_save).setVisible(false);
 
-                action.findItem(R.id.menu_edit).setVisible(true);
-                action.findItem(R.id.menu_save).setVisible(false);
+                    name.setFocusableInTouchMode(false);
+                    email.setFocusableInTouchMode(false);
+                    surname.setFocusableInTouchMode(false);
+                    profession_number.setFocusableInTouchMode(false);
+                    cabinet.setFocusableInTouchMode(false);
+                    description.setFocusableInTouchMode(false);
+                    cabinet_address.setFocusableInTouchMode(false);
+                    name.setFocusable(false);
+                    email.setFocusable(false);
+                    surname.setFocusable(false);
+                    profession_number.setFocusable(false);
+                    cabinet.setFocusable(false);
+                    description.setFocusable(false);
+                    cabinet_address.setFocusable(false);
+                    btn_photo_upload.setVisibility(View.GONE);
+                    btn_delete_user.setVisibility(View.GONE);
+                    btn_logout.setVisibility(View.VISIBLE);
+                    btn_my_appointments.setVisibility(View.VISIBLE);
+                    btn_add_treatment.setVisibility(View.GONE);
+                    btn_delete_treatment.setVisibility(View.GONE);
+                    startHour.setEnabled(false);
+                    endHour.setEnabled(false);
 
-                name.setFocusableInTouchMode(false);
-                email.setFocusableInTouchMode(false);
-                surname.setFocusableInTouchMode(false);
-                profession_number.setFocusableInTouchMode(false);
-                cabinet.setFocusableInTouchMode(false);
-                description.setFocusableInTouchMode(false);
-                name.setFocusable(false);
-                email.setFocusable(false);
-                surname.setFocusable(false);
-                profession_number.setFocusable(false);
-                cabinet.setFocusable(false);
-                description.setFocusable(false);
-                btn_photo_upload.setVisibility(View.GONE);
-                btn_delete_user.setVisibility(View.GONE);
-                btn_logout.setVisibility(View.VISIBLE);
-                btn_add_treatment.setVisibility(View.GONE);
-                btn_delete_treatment.setVisibility(View.GONE);
+                    for (CheckBox checkBox : checkBoxList) {
+                        checkBox.setClickable(false);
+                    }
+                    checkProfile();
 
-                return true;
 
+                    return true;
+                }else {
+                    Toast.makeText(PhysioDashboardActivity.this, "Wybierz poprawne godziny przyjęć!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             default:
 
                 return super.onOptionsItemSelected(item);
@@ -265,23 +312,53 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
             profession_number.setText(user.get(sessionManager.PROFESSION_NUMBER));
             cabinet.setText(user.get(sessionManager.CABINET));
             description.setText(user.get(sessionManager.DESCRIPTION));
+            cabinet_address.setText(user.get(SessionManager.CABINET_ADDRESS));
             Picasso.get().load(user.get(sessionManager.PHOTO))
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .into(profile_image);
+            setDays(user.get(SessionManager.DAYS));
+            setHours(user.get(SessionManager.HOURS));
             System.out.println("Znaleziono uzytkownika");
         }else{
             System.out.println("Brak uzytkownika");
         }
     }
 
-    private void showTreatmentList(){
-        adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, treatmentNameList);
-        treatmentLV.setAdapter(adapter);
-        System.out.println("4. ShowTreatmentList");
+
+    private void setupRecyclerView(List<Treatment> currentTreatment) {
+        layoutManager = new LinearLayoutManager(this);
+
+        treatmentsAdapter = new MyTreatmentsAdapter(currentTreatment, c, editMode, new MyTreatmentsAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick (Treatment treatment,View view, int position){
+                    if(editMode){
+                        if (previousView != null) {
+                            previousView.setBackgroundColor(getResources().getColor(R.color.colorTextBright));
+                        }
+                        if (view != previousView) {
+                            selectedT = treatment;
+                            view.setBackgroundColor(getResources().getColor(R.color.tealgreen));
+                            previousView = view;
+                            btn_edit_treatment.setVisibility(view.VISIBLE);
+                            System.out.println(selectedT.getName().toString());
+                        } else {
+                            view.setBackgroundColor(getResources().getColor(R.color.colorTextBright));
+                            btn_edit_treatment.setVisibility(view.GONE);
+                            selectedT = null;
+                            previousView = null;
+                        }
+                    }
+
+            //    Utils.show(c, treatment.getId() + treatment.getName() + " clicked!");
+            }
+        });
+        treatmentRecyclerView.setAdapter(treatmentsAdapter);
+        treatmentRecyclerView.setLayoutManager(layoutManager);
     }
 
-    private void retrieveTreatment(final String action, String userID) {
+    private void retrieveTreatment(
+            final String action, String userID) {
 
         RestApi api = Utils.getClient().create(RestApi.class);
         Call<ResponseModel> retrievedData;
@@ -295,14 +372,11 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                     return;
                 }
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Treatment> currentTreatment = response.body().getTreatments();
+                    currentTreatment = response.body().getTreatments();
                     System.out.println(" 1 . currentTreatment: " + currentTreatment);
-                    for (int i = 0; i < currentTreatment.size(); i++) {
-                        treatmentNameList.add(currentTreatment.get(i).getName());
-                    }
                     Log.d("2 . RETROFIT", "response : " + response.body().getTreatments());
-                    System.out.println("3. treatmentNameList: " + treatmentNameList);
-                    showTreatmentList();
+                    setupRecyclerView(currentTreatment);
+                    checkProfile();
                 }else if (!response.isSuccessful()) {
                     showInfoDialog(PhysioDashboardActivity.this, "UNSUCCESSFUL",
                             "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
@@ -319,18 +393,21 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
 
     //UPDATE NAME, EMAIL IN DB
     private void updateData() {
-        String sName, sEmail, sId, sSurname, sProfessionNumber, sCabinet, sDescription;
+        String sName, sEmail, sId, sSurname, sProfessionNumber, sCabinet, sDescription, sCabinetAddress, sDays, sHours;
         sName = name.getText().toString();
         sEmail = email.getText().toString();
         sSurname = surname.getText().toString();
         sProfessionNumber = profession_number.getText().toString();
         sCabinet = cabinet.getText().toString();
         sDescription = description.getText().toString();
+        sCabinetAddress = cabinet_address.getText().toString();
+        sDays = getDays();
+        sHours = getHours(selectedStartHour, selectedEndHour);
         sId = getId;
 
         showProgressBar(mProgressBar);
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> update = api.updatePhysio("UPDATE", sId, sName, sEmail, sSurname, sProfessionNumber, sCabinet, sDescription);
+        Call<ResponseModel> update = api.updatePhysio("UPDATE", sId, sName, sEmail, sSurname, sProfessionNumber, sCabinet, sDescription, sCabinetAddress, sDays, sHours);
         update.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
@@ -469,10 +546,10 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         });
     }
 
-    private void deleteTreatment(String treatmentName) {
+    private void deleteTreatment(Treatment treatment) {
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> del = api.deleteTreatment("DELETE_TREATMENT", treatmentName, getId);
-        System.out.println("ID: " + getId + " treatment: " + treatmentName);
+        Call<ResponseModel> del = api.deleteTreatment("DELETE_TREATMENT", treatment.getName(), getId);
+        System.out.println("ID: " + getId + " treatment: " + treatment.getName());
 
         showProgressBar(mProgressBar);
         del.enqueue(new Callback<ResponseModel>() {
@@ -513,6 +590,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         cabinet.addTextChangedListener(myCabinetTextWatcher);
         myCabinetAdapter = new MyCabinetAdapter(PhysioDashboardActivity.this);
         cabinetRecyclerView.setLayoutManager(new LinearLayoutManager(PhysioDashboardActivity.this));
+        //autocompleteCabinet.setAdapter(myCabinetAdapter);
         myCabinetAdapter.setClickListener(this);
         cabinetRecyclerView.setAdapter(myCabinetAdapter);
         myCabinetAdapter.notifyDataSetChanged();
@@ -551,6 +629,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         mProgressBar.setIndeterminate(true);
         mProgressBar.setVisibility(View.GONE);
 
+        info = findViewById(R.id.info_text_view);
         name = findViewById(R.id.name);
         name.setFocusableInTouchMode(false);
         email = findViewById(R.id.email);
@@ -564,7 +643,10 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         description = findViewById(R.id.description);
         description.setFocusableInTouchMode(false);
         description.setVisibility(View.GONE);
+        cabinet_address = findViewById(R.id.cabinet_address);
+        cabinet_address.setFocusableInTouchMode(false);
         btn_logout = findViewById(R.id.btn_logout);
+        btn_my_appointments = findViewById(R.id.btn_my_appointments);
 
         btn_photo_upload = findViewById(R.id.btn_photo);
         btn_photo_upload.setVisibility(View.GONE);
@@ -576,23 +658,108 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         btn_add_treatment.setVisibility(View.GONE);
         btn_delete_treatment = findViewById(R.id.btn_delete_treatment);
         btn_delete_treatment.setVisibility(View.GONE);
-        treatmentLV = findViewById(R.id.treatmentLV);
+        btn_edit_treatment = findViewById(R.id.btn_edit_treatment);
+        btn_edit_treatment.setVisibility(View.GONE);
+        treatmentRecyclerView = findViewById(R.id.treatment_recycler_view);
 
+        cb1 = findViewById(R.id.pon_checkBox);
+        cb2 = findViewById(R.id.wt_checkBox);
+        cb3 = findViewById(R.id.sr_checkBox);
+        cb4 = findViewById(R.id.czw_checkBox);
+        cb5 = findViewById(R.id.pt_checkBox);
+        cb6 = findViewById(R.id.sob_checkBox);
+        cb7 = findViewById(R.id.ndz_checkBox);
+        checkBoxList = Arrays.asList(cb1, cb2, cb3, cb4, cb5, cb6, cb7);
+
+        startHour = findViewById(R.id.spinner_start_hour);
+        startHour.setOnItemSelectedListener(this);
+        endHour = findViewById(R.id.spinner_end_hour);
+        endHour.setOnItemSelectedListener(this);
+        startHour.setEnabled(false);
+        endHour.setEnabled(false);
 
         user = sessionManager.getUserDetail("physio");
         getId = user.get(sessionManager.ID);
 
         cabinetRecyclerView = findViewById(R.id.cabinet_recyclerview);
+        autocompleteCabinet = findViewById(R.id.autoComplete_cabinet);
         Places.initialize(PhysioDashboardActivity.this, getResources().getString(R.string.googlemap_key));
+    }
+
+    private String getDays(){
+        StringBuilder daysSB = new StringBuilder(100);
+        if(cb1.isChecked()) daysSB.append("0,");
+        if(cb2.isChecked()) daysSB.append("1,");
+        if(cb3.isChecked()) daysSB.append("2,");
+        if(cb4.isChecked()) daysSB.append("3,");
+        if(cb5.isChecked()) daysSB.append("4,");
+        if(cb6.isChecked()) daysSB.append("5,");
+        if(cb7.isChecked()) daysSB.append("6");
+        return daysSB.toString();
+    }
+
+    private void setDays(String days){
+        if(days.contains("0")) cb1.setChecked(true);
+        if(days.contains("1")) cb2.setChecked(true);
+        if(days.contains("2")) cb3.setChecked(true);
+        if(days.contains("3")) cb4.setChecked(true);
+        if(days.contains("4")) cb5.setChecked(true);
+        if(days.contains("5")) cb6.setChecked(true);
+        if(days.contains("6")) cb7.setChecked(true);
+    }
+
+    private String getHours(String startHour, String endHour){
+        int startSlot = Utils.convertStringToTimeSlot(startHour);
+        int endSlot = Utils.convertStringToTimeSlot(endHour);
+        StringBuilder hoursSB = new StringBuilder(100);
+        for(int i = startSlot; i < endSlot; i++){
+            hoursSB.append(Integer.toString(i)+",");
+        }
+        System.out.println("get hours:" + hoursSB);
+        return hoursSB.toString();
+    }
+
+    private void setHours(String hours){
+        if(hours.equals("")) {
+            startHour.setSelection(0);
+            endHour.setSelection(7);
+        }else{
+            String st = hours.substring(0, hours.length() - 1);
+            if (st.length() <= 2) {
+                String firstSlot = st;
+                startHour.setSelection(Integer.parseInt(firstSlot));
+                endHour.setSelection(Integer.parseInt(firstSlot) + 1);
+            } else {
+                String firstSlot = st.substring(0, st.indexOf(","));
+                String lastSlot = st.substring(st.lastIndexOf(',') + 1);
+                System.out.println("hours: " + st + "first selection: " + firstSlot + " last selection: " + lastSlot);
+                startHour.setSelection(Integer.parseInt(firstSlot));
+                endHour.setSelection(Integer.parseInt(lastSlot) + 1);
+            }
+        }
+    }
+
+    private void checkProfile(){
+        if(name.getText().toString().equals("") || surname.getText().toString().equals("") || email.getText().toString().equals("") ||
+                profession_number.getText().toString().equals("") ||  cabinet.getText().toString().equals("") ||  cabinet_address.getText().toString().equals("")
+         || (!cb1.isChecked() && !cb2.isChecked() && !cb3.isChecked() && !cb4.isChecked() && !cb5.isChecked() && !cb6.isChecked() && !cb7.isChecked()) || currentTreatment.isEmpty()){
+            System.out.println("checkProfile, treatment list: " + currentTreatment.toString());
+            info.setVisibility(View.VISIBLE);
+        }else{
+            info.setVisibility(View.GONE);
+        }
     }
 
 
     @Override
     public void onCloseDialog() {
-        treatmentNameList.clear();
-        treatmentLV.setAdapter(null);
+        System.out.println("OnCloseDialog");
+        currentTreatment.clear();
+        treatmentRecyclerView.setAdapter(null);
         if(user.containsValue(null) != true)
         retrieveTreatment("RETRIEVE_TREATMENT", getId);
+        selectedT = null;
+        btn_edit_treatment.setVisibility(View.GONE);
     }
 
     @Override
@@ -600,5 +767,45 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
         String city = String.valueOf(place.getName());
         cabinet.setText(city);
         cabinetRecyclerView.setVisibility(View.GONE);
+    }
+
+    //-----spinner listeners---//
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+
+        switch (parent.getId()) {
+            case R.id.spinner_start_hour:
+                selectedStartHour = parent.getSelectedItem().toString();
+                System.out.println("startHour:" + selectedStartHour);
+                break;
+            case R.id.spinner_end_hour:
+                selectedEndHour = parent.getSelectedItem().toString();
+                System.out.println("getHours:" + getHours(selectedStartHour,selectedEndHour));
+
+                break; 
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
     }
 }

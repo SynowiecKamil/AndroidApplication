@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="5dp"
+    android:orientation="horizontal"
+    card_view:cardCornerRadius="5dp"
+    android:background="@color/teal"
+    card_view:cardElevation="5dp">
+
+
+
+        <LinearLayout
+            android:id="@+id/treatment_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:backgroundTint="@color/colorTextBright">
+
+            <TextView
+                android:id="@+id/treatment_text_view"
+                fontPath="fonts/RobotoCondensed-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Zabieg"
+                android:textStyle="italic"
+                tools:ignore="MissingPrefix" />
+            <TextView
+                fontPath="fonts/RobotoCondensed-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cena:"
+                android:textStyle="italic"
+                tools:ignore="MissingPrefix"
+                android:paddingLeft="15dp" />
+            <TextView
+                android:id="@+id/price_text_view"
+                fontPath="fonts/RobotoCondensed-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="-Cena-"
+                android:textStyle="italic"
+                tools:ignore="MissingPrefix" />
+<!--            <EditText-->
+<!--                android:id="@+id/price_edit_text"-->
+<!--                fontPath="fonts/RobotoCondensed-Regular.ttf"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:text="Wprowadz cenę"-->
+<!--                android:textSize="10dp"-->
+<!--                tools:ignore="MissingPrefix" />-->
+            <TextView
+                fontPath="fonts/RobotoCondensed-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="zł / h"
+                android:textStyle="italic"
+                tools:ignore="MissingPrefix" />
+<!--            <Button-->
+<!--                android:id="@+id/btn_edit_treatment"-->
+<!--                android:text="Zatwierdź"-->
+<!--                android:layout_width="70dp"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:layout_marginLeft="30dp"-->
+<!--                android:background="@drawable/square_button"-->
+<!--                android:textSize="10dp"/>-->
+        </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

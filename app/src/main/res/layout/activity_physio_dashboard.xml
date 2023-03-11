@@ -4,29 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/spearmint"
     tools:context=".physio.PhysioDashboardActivity">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/info_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:visibility="gone"
+        android:textColor="#AF0C00"
+        android:text="Uzupełnij brakujące dane profilu! W przeciwnym razie twój profil nie będzie widoczny dla pacjentów." />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:layout_below="@+id/info_text_view"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="5dp"
         android:src="@drawable/logo"
         />
 
     <Button
         android:id="@+id/btn_photo"
-        style="@style/Widget.AppCompat.ActionButton.CloseMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
         android:layout_below="@+id/profile_image"
         android:layout_centerHorizontal="true"
-        android:text="Edytuj zdjęcie profilowe" />
+        android:text="Edytuj zdjęcie profilowe"
+        android:background="@drawable/square_button"
+        android:textSize="10dp"/>
 
     <ProgressBar
         android:id="@+id/mProgressBarSave"
@@ -119,18 +133,37 @@
             android:inputType="textPersonName"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/cabinet_address"
+            android:hint="Adres gabinetu przyjęć"
+            android:inputType="textPersonName"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cabinet_recyclerview"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="0dp"
-        android:layout_width="match_parent"
+
+
+    <AutoCompleteTextView
+        android:id="@+id/autoComplete_cabinet"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_cabinet"
-        />
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cabinet_recyclerview"
+        android:layout_width="332dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/layout_description"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="40dp" />
 
     <LinearLayout
         android:id="@+id/layout_description"
@@ -140,7 +173,8 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="4"
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/description"
@@ -149,7 +183,154 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="4"
             android:hint="Opis"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/cabinet_recyclerview"
+        android:gravity="center"
+        android:id="@+id/layout_days">
+        <TextView
+            android:id="@+id/pon_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:textSize="16dp"
+            android:text="Dni w których realizowane są wizyty:" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            >
+            <CheckBox
+                android:id="@+id/pon_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Pon"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/wt_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Wt"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/sr_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Sr"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/czw_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Czw"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/pt_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Pt"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/sob_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Sob"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+            <CheckBox
+                android:id="@+id/ndz_checkBox"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Ndz"
+                android:gravity="center_horizontal"
+                android:button="@null"
+                android:clickable="false"
+                android:drawableBottom="?android:attr/listChoiceIndicatorMultiple"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_hours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_days"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/hours_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:textSize="16dp"
+            android:text="Godziny przyjec:" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Od:" />
+            <Spinner
+                android:id="@+id/spinner_start_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/hours_array" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Do:" />
+            <Spinner
+                android:id="@+id/spinner_end_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/hours_array" />
+
+
+        </LinearLayout>
     </LinearLayout>
 
 
@@ -158,8 +339,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:layout_marginBottom="15dp"
         android:id="@+id/layout_treatment"
-        android:layout_below="@id/cabinet_recyclerview">
+        android:layout_below="@id/layout_hours">
 
 
 
@@ -167,68 +349,103 @@
             android:id="@+id/linear_layout_treatment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             >
             <TextView
                 android:id="@+id/Treatment"
-                android:layout_marginLeft="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Przeprowadzane zabiegi:" />
+                android:text="Zabiegi:"
+                android:textSize="16dp"/>
 
+            <Button
+                android:id="@+id/btn_edit_treatment"
+                android:text="Edytuj"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/square_button"
+                android:textSize="10dp"/>
             <Button
                 android:id="@+id/btn_add_treatment"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@color/colorPrimary"
                 android:text="Dodaj"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"/>
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/square_button"
+                android:textSize="10dp"/>
             <Button
                 android:id="@+id/btn_delete_treatment"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@color/colorPrimary"
                 android:text="Usuń"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"/>
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/square_button"
+                android:backgroundTint="@color/tealgreen"
+                android:textSize="10dp"/>
         </LinearLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/treatment_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linear_layout_treatment"/>
 
-        <ListView
-            android:id="@+id/treatmentLV"
-            android:layout_width="341dp"
-            android:layout_height="200dp"
-            android:layout_below="@id/linear_layout_treatment"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:nestedScrollingEnabled="false"/>
+<!--        <ListView-->
+<!--            android:id="@+id/treatmentLV"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="183dp"-->
+<!--            android:layout_below="@id/treatment_recycler_view"-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:nestedScrollingEnabled="true" />-->
 
 
 
     </RelativeLayout>
 
     <Button
-        android:layout_below="@+id/btn_delete_user"
-        android:id="@+id/btn_logout"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="15dp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Wyloguj"
+        android:id="@+id/btn_my_appointments"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
+        android:layout_height="40dp"
         android:layout_below="@+id/layout_treatment"
-        android:id="@+id/btn_delete_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="12dp"
+        android:layout_weight="1"
+        android:text="Moje wizyty"
+        android:background="@drawable/square_button"
+        android:textSize="16dp" />
+
+    <Button
+        android:layout_below="@+id/btn_my_appointments"
+        android:id="@+id/btn_logout"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="Wyloguj"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
+
+    <Button
+        android:layout_below="@+id/layout_treatment"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:id="@+id/btn_delete_user"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:text="Usuń konto"
-        android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
 </RelativeLayout>
 </ScrollView>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/spearmint"
     tools:context=".patient.PhysioDetailActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -11,28 +12,32 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:src="@drawable/logo"
         />
 
     <LinearLayout
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@+id/profile_image"
         android:weightSum="2"
-        android:id="@+id/layout_text"
+        android:id="@+id/layout_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/mint">
 
-        <EditText
+        <TextView
             android:id="@+id/name"
             android:hint="Imię"
-            android:inputType="textPersonName"
+            android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"/>
 
     </LinearLayout>
 
@@ -40,37 +45,60 @@
         android:id="@+id/layout_text_email"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_below="@id/layout_text"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/layout_name"
         android:weightSum="2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/mint">
 
-        <EditText
+        <TextView
             android:id="@+id/email"
             android:hint="Email"
             android:inputType="textPersonName"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="16dp"/>
     </LinearLayout>
 
 
-
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/layout_text_email"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="30dp"
+        android:layout_weight="1"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/mint"
+        android:hint="Adres gabinetu: "
+        android:inputType="textPersonName"
+        android:paddingLeft="10dp"
+        android:textSize="16dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
         android:id="@+id/treatmentLayout"
-        android:layout_below="@id/layout_text_email">
+        android:layout_below="@id/location">
         <TextView
             android:id="@+id/Treatment"
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16dp"
             android:text="Rodzaj przeprowadzanych zabiegów:" />
     </RelativeLayout>
 
@@ -78,32 +106,43 @@
     <ListView
         android:id="@+id/treatmentLV"
         android:layout_width="341dp"
-        android:layout_height="282dp"
-        android:layout_below="@id/treatmentLayout"
+        android:layout_height="300dp"
+        android:layout_below="@id/treatment_recycler_view"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="30dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/treatment_recycler_view"
+        android:layout_marginLeft="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/treatmentLayout"/>
 
     <Button
         android:id="@+id/btn_appointment"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/colorPrimary2"
+        android:layout_marginBottom="14dp"
         android:text="Rezerwuj wizytę"
         android:layout_above="@id/btn_back"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp"
+        android:background="@drawable/square_button"
+        android:textSize="16dp"/>
     <Button
         android:layout_alignParentBottom="true"
         android:id="@+id/btn_back"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/colorPrimary"
         android:text="Powrót"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp"
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp"/>
 
 
 </RelativeLayout>

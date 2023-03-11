@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary"
+    android:background="@color/spearmint"
     android:paddingLeft="30dp"
     android:paddingRight="30dp"
     android:paddingTop="80dp"
@@ -25,7 +25,7 @@
         <EditText
             android:inputType="textEmailAddress"
             android:hint="Email"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorTextDark"
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -43,7 +43,7 @@
         <EditText
             android:inputType="textPassword"
             android:hint="Hasło"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorTextDark"
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -62,22 +62,23 @@
     <Button
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_below="@id/layoutpassword"
         android:layout_marginTop="38dp"
-        android:backgroundTint="@color/colorPrimary2"
         android:text="ZALOGUJ"
-        android:textColor="@color/colorText" />
+        android:background="@drawable/square_button"
+        android:textSize="16dp" />
     <Button
         android:id="@+id/btn_back"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutpassword"
+        android:layout_height="55dp"
+        android:layout_below="@id/btn_login"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="109dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginTop="15dp"
         android:text="Powrót"
-        android:textColor="@color/colorText" />
+        android:background="@drawable/square_button"
+        android:backgroundTint="@color/tealgreen"
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/link_regist"
@@ -87,18 +88,19 @@
         android:layout_marginBottom="28dp"
         android:gravity="center"
         android:text="Zarejestruj"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorTextDark" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="352dp"
         android:layout_height="125dp"
-        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="29dp"
         android:layout_marginLeft="77dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
         android:text="Logowanie fizjoterapeuty"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="@color/colorTextDark"/>
 
 </RelativeLayout>
