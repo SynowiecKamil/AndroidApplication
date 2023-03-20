@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/spearmint"
-    tools:context=".physio.PhysioDashboardActivity">
+    tools:context=".Controller.PhysioActivities.PhysioDashboardActivity">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mint"
-    tools:context=".patient.PatientDashboardActivity">
+    tools:context=".Controller.PatientActivities.PatientDashboardActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"

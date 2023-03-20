@@ -10,7 +10,7 @@
     android:paddingRight="30dp"
     android:paddingTop="80dp"
     android:background="@color/spearmint"
-    tools:context=".physio.PhysioRegisterActivity">
+    tools:context=".Controller.PhysioActivities.PhysioRegisterActivity">
 
     <TextView
         android:id="@+id/textView2"

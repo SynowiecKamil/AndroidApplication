@@ -6,7 +6,7 @@
     android:id="@+id/physio_appointments_linear_layout"
     android:layout_height="match_parent"
     android:background="@color/teal"
-    tools:context=".physio.PhysioAppointmentsActivity"
+    tools:context=".Controller.PhysioActivities.PhysioAppointmentsActivity"
     android:orientation="vertical">
 
     <LinearLayout

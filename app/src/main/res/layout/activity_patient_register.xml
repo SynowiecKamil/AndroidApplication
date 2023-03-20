@@ -10,7 +10,7 @@
     android:paddingRight="30dp"
     android:paddingTop="80dp"
     android:background="@color/mint"
-    tools:context=".patient.PatientRegisterActivity">
+    tools:context=".Controller.PatientActivities.PatientRegisterActivity">
 
     <TextView
         android:id="@+id/textView4"

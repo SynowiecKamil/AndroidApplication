@@ -13,9 +13,9 @@
         android:theme="@style/AppThemeRegist"
         android:usesCleartextTraffic="true">
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y"/>
-        <activity android:name=".patient.PatientAppointmentsActivity" />
+        <activity android:name=".Controller.PatientActivities.PatientAppointmentsActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Controller.MainActivity"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,20 +24,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".patient.PatientDashboardActivity"
+            android:name=".Controller.PatientActivities.PatientDashboardActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".patient.PatientReservationActivity" />
-        <activity android:name=".patient.PatientSearchActivity" />
-        <activity android:name=".patient.PhysioDetailActivity" />
+        <activity android:name=".Controller.PatientActivities.PatientReservationActivity" />
+        <activity android:name=".Controller.PatientActivities.PatientSearchActivity" />
+        <activity android:name=".Controller.PatientActivities.PhysioDetailActivity" />
         <activity
-            android:name=".physio.PhysioDashboardActivity"
+            android:name=".Controller.PhysioActivities.PhysioDashboardActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".patient.PatientLoginActivity" />
-        <activity android:name=".physio.PhysioLoginActivity" />
-        <activity android:name=".patient.PatientRegisterActivity" />
-        <activity android:name=".physio.PhysioRegisterActivity" />
-        <activity android:name=".physio.PhysioAppointmentsActivity" />
+        <activity android:name=".Controller.PatientActivities.PatientLoginActivity" />
+        <activity android:name=".Controller.PhysioActivities.PhysioLoginActivity" />
+        <activity android:name=".Controller.PatientActivities.PatientRegisterActivity" />
+        <activity android:name=".Controller.PhysioActivities.PhysioRegisterActivity" />
+        <activity android:name=".Controller.PhysioActivities.PhysioAppointmentsActivity" />
     </application>
 
 </manifest>

@@ -8,7 +8,7 @@
     android:paddingLeft="30dp"
     android:paddingRight="30dp"
     android:paddingTop="80dp"
-    tools:context=".physio.PhysioLoginActivity">
+    tools:context=".Controller.PhysioActivities.PhysioLoginActivity">
 
     <ImageView
         android:id="@+id/logo"

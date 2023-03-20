@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/patient_appointments_linear_layout"
-    tools:context=".patient.PatientAppointmentsActivity"
+    tools:context=".Controller.PatientActivities.PatientAppointmentsActivity"
     android:background="@color/teal"
     android:orientation="vertical">
 
