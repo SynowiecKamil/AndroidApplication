@@ -54,17 +54,17 @@ import synowiec.application.R;
 import synowiec.application.Controller.SessionManager;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.MyCabinetAdapter;
-import synowiec.application.Controller.helpers.MyTreatmentsAdapter;
-import synowiec.application.Controller.helpers.TreatmentDialog;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.MyCabinetAdapter;
+import synowiec.application.Controller.Helpers.MyTreatmentsAdapter;
+import synowiec.application.Controller.Helpers.TreatmentDialog;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Treatment;
 
-import static synowiec.application.Controller.helpers.Utils.hideProgressBar;
-import static synowiec.application.Controller.helpers.Utils.openActivity;
-import static synowiec.application.Controller.helpers.Utils.show;
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
-import static synowiec.application.Controller.helpers.Utils.showProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.hideProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.openActivity;
+import static synowiec.application.Controller.Helpers.Utils.show;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showProgressBar;
 
 
 public class PhysioDashboardActivity extends AppCompatActivity implements TreatmentDialog.DialogListener, MyCabinetAdapter.ClickListener, AdapterView.OnItemSelectedListener {
@@ -242,7 +242,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                 if(!getHours(selectedStartHour, selectedEndHour).equals("")) {
                     editMode = false;
                     updateData();
-                    if (bitmap != null) UploadPictureRetrofit(getId, getStringImage(bitmap));
+                    if (bitmap != null) uploadPictureRetrofit(getId, getStringImage(bitmap));
 
                     action.findItem(R.id.menu_edit).setVisible(true);
                     action.findItem(R.id.menu_save).setVisible(false);
@@ -456,7 +456,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
     }
 
     //UPDATE PHOTO IN DB
-    private void UploadPictureRetrofit(final String id, final String photo){
+    private void uploadPictureRetrofit(final String id, final String photo){
         RestApi api = Utils.getClient().create(RestApi.class);
         Call<ResponseModel> upl = api.uploadImagePhysio("UPLOAD_IMAGE", id, photo);
 

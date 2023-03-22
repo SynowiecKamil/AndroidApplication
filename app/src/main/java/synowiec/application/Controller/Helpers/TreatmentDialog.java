@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -69,7 +69,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_dialog, null);
+        View view = inflater.inflate(R.layout.layout_treatment_dialog, null);
         spinner = view.findViewById(R.id.spinner);
         if(action.equals("edit")) {
             dialogTitle = "Edytuj zabieg " + treatment.getName();

@@ -33,12 +33,12 @@ import retrofit2.Callback;
 import synowiec.application.R;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Appointment;
 import synowiec.application.Controller.PatientActivities.PatientDashboardActivity;
 
-import static synowiec.application.Controller.helpers.Utils.openActivity;
-import static synowiec.application.Controller.helpers.Utils.show;
+import static synowiec.application.Controller.Helpers.Utils.openActivity;
+import static synowiec.application.Controller.Helpers.Utils.show;
 
 public class ReservationConfirmFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

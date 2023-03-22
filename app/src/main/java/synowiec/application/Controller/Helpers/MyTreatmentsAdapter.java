@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -73,7 +73,7 @@ public class MyTreatmentsAdapter extends RecyclerView.Adapter<MyTreatmentsAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.c=parent.getContext();
-        View view = LayoutInflater.from(c).inflate(R.layout.treatment_model, parent, false);
+        View view = LayoutInflater.from(c).inflate(R.layout.layout_treatment, parent, false);
         MyTreatmentsAdapter.ViewHolder vh = new MyTreatmentsAdapter.ViewHolder(view);
         return vh;
     }

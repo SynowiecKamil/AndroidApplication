@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.content.Context;
 import android.content.Intent;

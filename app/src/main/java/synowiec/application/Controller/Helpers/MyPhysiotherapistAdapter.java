@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.ivbaranov.mli.MaterialLetterIcon;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -32,10 +31,9 @@ import synowiec.application.R;
 import synowiec.application.Model.Physiotherapist;
 import synowiec.application.Controller.PatientActivities.PhysioDetailActivity;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MyPhysiotherapistAdapter extends RecyclerView.Adapter<MyPhysiotherapistAdapter.ViewHolder> {
 
     private Context c;
-    private int[] mMaterialColors;
     private List<Physiotherapist> physiotherapists;
     public String searchString = "";
 
@@ -47,14 +45,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             View.OnClickListener {
         private TextView nameTxt, surnameTxt, galaxyTxt;
         CircleImageView profile_image;
-        private MaterialLetterIcon mIcon;
         private ItemClickListener itemClickListener;
         /**
          reference widgets
          */
         ViewHolder(View itemView) {
             super(itemView);
-        //    mIcon = itemView.findViewById(R.id.mMaterialLetterIcon);
             profile_image = itemView.findViewById(R.id.profile_image);
             nameTxt = itemView.findViewById(R.id.mNameTxt);
             surnameTxt = itemView.findViewById(R.id.mSurnameTxt);
@@ -72,7 +68,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
 
-    public MyAdapter(ArrayList<Physiotherapist> physiotherapists) {
+    public MyPhysiotherapistAdapter(ArrayList<Physiotherapist> physiotherapists) {
         this.physiotherapists = physiotherapists;
     }
     /**
@@ -82,8 +78,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.c=parent.getContext();
-        //mMaterialColors = c.getResources().getIntArray(R.values.colors);
-        View view = LayoutInflater.from(c).inflate(R.layout.model, parent, false);
+        View view = LayoutInflater.from(c).inflate(R.layout.layout_physio, parent, false);
         ViewHolder vh = new ViewHolder(view);
         return vh;
     }
@@ -102,12 +97,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .into(holder.profile_image);
- //       holder.profile_image.setImageBitmap(getBitmapFromURL(p.getPhoto()));
-//        holder.mIcon.setInitials(true);
- //       holder.mIcon.setInitialsNumber(2);
-//        holder.mIcon.setLetterSize(25);
-//        holder.mIcon.setShapeColor(mMaterialColors[new Random().nextInt(
-//            mMaterialColors.length)]);
         if(!p.getName().isEmpty() && p.getName().length()>1){
        //     holder.mIcon.setLetter(p.getName());
 

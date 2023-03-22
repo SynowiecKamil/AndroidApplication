@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import synowiec.application.R;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Controller.PatientActivities.PatientLoginActivity;
 import synowiec.application.Controller.PhysioActivities.PhysioLoginActivity;
 

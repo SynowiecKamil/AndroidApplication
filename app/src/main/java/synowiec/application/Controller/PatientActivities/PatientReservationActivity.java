@@ -21,8 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import synowiec.application.R;
-import synowiec.application.Controller.helpers.MyViewPagerAdapter;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.MyViewPagerAdapter;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Physiotherapist;
 
 public class PatientReservationActivity extends AppCompatActivity {

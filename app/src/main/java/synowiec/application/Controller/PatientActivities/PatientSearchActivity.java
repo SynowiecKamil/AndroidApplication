@@ -35,20 +35,20 @@ import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.MyAdapter;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.MyPhysiotherapistAdapter;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Physiotherapist;
 
-import static synowiec.application.Controller.helpers.Utils.hideProgressBar;
-import static synowiec.application.Controller.helpers.Utils.show;
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
-import static synowiec.application.Controller.helpers.Utils.showProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.hideProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.show;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showProgressBar;
 
 public class PatientSearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener, AdapterView.OnItemSelectedListener{
 
     //defining instance fields
     private RecyclerView rv;
-    private MyAdapter mAdapter;
+    private MyPhysiotherapistAdapter mAdapter;
     private LinearLayoutManager layoutManager;
     public ArrayList<Physiotherapist> allPagesPhysiotherapists = new ArrayList();
     public ArrayList<String> cabinetList = new ArrayList<>();
@@ -107,7 +107,7 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
      */
     private void setupRecyclerView() {
         layoutManager = new LinearLayoutManager(this);
-        mAdapter = new MyAdapter(allPagesPhysiotherapists);
+        mAdapter = new MyPhysiotherapistAdapter(allPagesPhysiotherapists);
         rv.setAdapter(mAdapter);
         rv.setLayoutManager(layoutManager);
     }

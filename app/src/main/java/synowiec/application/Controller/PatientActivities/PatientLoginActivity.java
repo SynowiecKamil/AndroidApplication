@@ -23,9 +23,9 @@ import synowiec.application.Controller.MainActivity;
 import synowiec.application.R;
 import synowiec.application.Controller.SessionManager;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.Utils;
 
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
 
 public class PatientLoginActivity extends AppCompatActivity {
 

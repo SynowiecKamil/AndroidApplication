@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -87,7 +87,7 @@ public class MyCabinetAdapter extends RecyclerView.Adapter<MyCabinetAdapter.Pred
     @Override
     public PredictionHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View convertView = layoutInflater.inflate(R.layout.place_recycler_item_layout, viewGroup, false);
+        View convertView = layoutInflater.inflate(R.layout.layout_place_recycler_item, viewGroup, false);
         return new PredictionHolder(convertView);
     }
 

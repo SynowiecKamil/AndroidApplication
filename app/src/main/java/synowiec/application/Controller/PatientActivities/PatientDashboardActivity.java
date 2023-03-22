@@ -54,14 +54,14 @@ import synowiec.application.R;
 import synowiec.application.Controller.SessionManager;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Patient;
 
-import static synowiec.application.Controller.helpers.Utils.hideProgressBar;
-import static synowiec.application.Controller.helpers.Utils.openActivity;
-import static synowiec.application.Controller.helpers.Utils.show;
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
-import static synowiec.application.Controller.helpers.Utils.showProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.hideProgressBar;
+import static synowiec.application.Controller.Helpers.Utils.openActivity;
+import static synowiec.application.Controller.Helpers.Utils.show;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showProgressBar;
 
 public class PatientDashboardActivity extends AppCompatActivity {
 
@@ -141,7 +141,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
         /////make map clear
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
-        dialog.setContentView(R.layout.layout_dialog_map);////your custom content
+        dialog.setContentView(R.layout.layout_appointment_details_dialog);////your custom content
 
         MapView mMapView = (MapView) dialog.findViewById(R.id.mapView);
         MapsInitializer.initialize(c);

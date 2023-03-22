@@ -30,13 +30,13 @@ import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.MyTreatmentsAdapter;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.MyTreatmentsAdapter;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Appointment;
 import synowiec.application.Model.Physiotherapist;
 import synowiec.application.Model.Treatment;
 
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
 
 public class PhysioDetailActivity extends AppCompatActivity implements View.OnClickListener{
 

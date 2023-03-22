@@ -1,4 +1,4 @@
-package synowiec.application.Controller.helpers;
+package synowiec.application.Controller.Helpers;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -47,7 +47,7 @@ import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
 import synowiec.application.Model.Appointment;
 
-import static synowiec.application.Controller.helpers.Utils.show;
+import static synowiec.application.Controller.Helpers.Utils.show;
 
 public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAdapter.ViewHolder> {
 
@@ -113,7 +113,7 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.c=parent.getContext();
-        View view = LayoutInflater.from(c).inflate(R.layout.appointment_model, parent, false);
+        View view = LayoutInflater.from(c).inflate(R.layout.layout_appointment, parent, false);
         ViewHolder vh = new ViewHolder(view);
         return vh;
     }
@@ -216,7 +216,7 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
         Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        dialog.setContentView(R.layout.layout_dialog_map);////your custom content
+        dialog.setContentView(R.layout.layout_appointment_details_dialog);////your custom content
 
         MapView mMapView = (MapView) dialog.findViewById(R.id.mapView);
         MapsInitializer.initialize(context);

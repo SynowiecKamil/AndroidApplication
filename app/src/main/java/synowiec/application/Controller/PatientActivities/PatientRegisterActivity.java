@@ -22,10 +22,10 @@ import retrofit2.Response;
 import synowiec.application.R;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Patient;
 
-import static synowiec.application.Controller.helpers.Utils.showInfoDialog;
+import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
 
 public class PatientRegisterActivity extends AppCompatActivity {
 

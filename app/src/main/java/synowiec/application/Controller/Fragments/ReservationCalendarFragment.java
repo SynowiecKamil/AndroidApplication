@@ -33,10 +33,10 @@ import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.HorizontalCalendarView;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import synowiec.application.R;
-import synowiec.application.Controller.helpers.ITimeSlotLoadListener;
-import synowiec.application.Controller.helpers.MyTimeSlotAdapter;
-import synowiec.application.Controller.helpers.SpacesItemDecoration;
-import synowiec.application.Controller.helpers.Utils;
+import synowiec.application.Controller.Helpers.ITimeSlotLoadListener;
+import synowiec.application.Controller.Helpers.MyTimeSlotAdapter;
+import synowiec.application.Controller.Helpers.SpacesItemDecoration;
+import synowiec.application.Controller.Helpers.Utils;
 import synowiec.application.Model.Appointment;
 import synowiec.application.Model.Physiotherapist;
 
