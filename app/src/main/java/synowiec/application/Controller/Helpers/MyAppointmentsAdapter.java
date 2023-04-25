@@ -52,12 +52,9 @@ import static synowiec.application.Controller.Helpers.Utils.show;
 public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAdapter.ViewHolder> {
 
     private Context c, context;
-    private int[] mMaterialColors;
     private List<Appointment> appointments;
     private String user;
     private int time;
-    private MapView mMapView;
-    private LinearLayout patientLinearLayout, physioLinearLayout;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy HH");
 
     public MyAppointmentsAdapter(List<Appointment> appointments, String user, Context context) {
@@ -66,22 +63,15 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
         this.context = context;
     }
 
-    /**
-     * 1. Hold all the widgets which will be recycled and reference them.
-     * 2. Implement click event.
-     */
+
     public static class ViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
         private TextView patient_text_view, physio_text_view, date_text_view, time_text_view, cabinet_text_view, treatment_text_view;
         private ImageView closeImageView;
         private LinearLayout patientLinearLayout, physioLinearLayout;
         private Button btn_cancel;
-        CircleImageView profile_image;
-        private MaterialLetterIcon mIcon;
         private ItemClickListener itemClickListener;
-        /**
-         reference widgets
-         */
+
         ViewHolder(View itemView) {
             super(itemView);
             patientLinearLayout = itemView.findViewById(R.id.patient_linear_layout);
@@ -131,8 +121,8 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
             holder.physioLinearLayout.setVisibility(View.GONE);
             holder.patientLinearLayout.setVisibility(View.VISIBLE);
         }
-        holder.physio_text_view.setText(p.getPhysio_id());
-        holder.patient_text_view.setText(p.getPatient_id());
+        holder.physio_text_view.setText(p.getPhysioId());
+        holder.patient_text_view.setText(p.getPatientId());
         holder.treatment_text_view.setText(p.getTreatment());
         String date = p.getDate().replace("_", "/");
         holder.date_text_view.setText(date);
@@ -144,7 +134,7 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
 
         holder.btn_cancel.setOnClickListener(pos -> {
             if (user.equals("patient")){
-                initializeDialogMap(getLatLng(address), p, position);
+                initializeDialogMap(getLatLng(address, c), p, position);
             }
             else {
             new LovelyStandardDialog(c, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
@@ -242,8 +232,8 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
             }
         });
 
-        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel_visit);
-        btnCancel.setOnClickListener(new View.OnClickListener()
+        Button btnCancelVisit = (Button) dialog.findViewById(R.id.btn_cancel_visit);
+        btnCancelVisit.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -266,14 +256,15 @@ public class MyAppointmentsAdapter extends RecyclerView.Adapter<MyAppointmentsAd
         dialog.show();
     }
 
-    private LatLng getLatLng(String myAddress){
-        Geocoder geocoder = new Geocoder(c);
+
+    public LatLng getLatLng(String myAddress, Context context){
+        Geocoder geocoder = new Geocoder(context);
         LatLng latLng = null;
         try {
             List<Address> addressList = geocoder.getFromLocationName(myAddress, 1);
-            if(addressList != null){
-                double lat = addressList.get(0).getLatitude();
-                double lng = addressList.get(0).getLongitude();
+            if(addressList.size()>0){
+                double lat = (double)Math.round(addressList.get(0).getLatitude() * 10000d) / 10000d;
+                double lng = (double)Math.round(addressList.get(0).getLongitude() * 10000d) / 10000d;
                 latLng = new LatLng(lat,lng);
             }
         } catch (IOException e) {

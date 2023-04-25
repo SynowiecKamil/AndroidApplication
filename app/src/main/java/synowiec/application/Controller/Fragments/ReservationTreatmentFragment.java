@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
@@ -43,6 +44,8 @@ public class ReservationTreatmentFragment extends Fragment {
 
     @BindView(R.id.spinner)
     MaterialSpinner spinner;
+    @BindView(R.id.txt_price)
+    TextView price;
 
 
     static ReservationTreatmentFragment instance;
@@ -81,6 +84,7 @@ public class ReservationTreatmentFragment extends Fragment {
                     for (int i = 0; i < currentTreatment.size(); i++) {
                     if(currentTreatment.get(i).getName().equals(item)){
                         intent.putExtra(Utils.KEY_PRICE_SELECTED, Double.parseDouble(currentTreatment.get(i).getId()));
+                        price.setText("Cena: " + currentTreatment.get(i).getId() + " zł / h");
                     }
                     }
                     intent.putExtra(Utils.KEY_STEP, 2);

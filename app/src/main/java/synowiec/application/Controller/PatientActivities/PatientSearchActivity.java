@@ -138,7 +138,7 @@ public class PatientSearchActivity extends AppCompatActivity implements SearchVi
                     return;
                 }
                 Log.d("RETROFIT", "response : " + response.body().toString());
-                List<Physiotherapist> currentPagePhysiotherapists = response.body().getResult();
+                List<Physiotherapist> currentPagePhysiotherapists = response.body().getPhysiotherapists();
 
                 if (currentPagePhysiotherapists != null && currentPagePhysiotherapists.size() > 0) {
                     if (action.equalsIgnoreCase("GET_PAGINATED_SEARCH")) {

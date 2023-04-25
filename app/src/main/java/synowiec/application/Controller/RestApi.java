@@ -20,9 +20,9 @@ public interface RestApi {
 
     @FormUrlEncoded
     @POST("patient.php")
-    Call<String> getPatientLogin(@Field("action") String action,
-                                 @Field("email") String email,
-                                 @Field("password") String password);
+    Call<ResponseModel> getPatientLogin(@Field("action") String action,
+                                        @Field("email") String email,
+                                        @Field("password") String password);
 
     @FormUrlEncoded
     @POST("patient.php")
@@ -131,7 +131,7 @@ public interface RestApi {
                                      @Field("name") String name,
                                      @Field("email") String email,
                                      @Field("surname") String surname,
-                                     @Field("profession_number") String profession_number,
+                                     @Field("profession_number") String professionNumber,
                                      @Field("city") String city,
                                      @Field("description") String description,
                                      @Field("address") String address,

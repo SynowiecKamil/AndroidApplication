@@ -115,6 +115,12 @@ public class Utils {
         i.putExtra("PHYSIOTHERAPIST_KEY", physiotherapist);
         c.startActivity(i);
     }
+    public static void sendPatientToActivity(Context c, Patient patient,
+                                                     Class clazz){
+        Intent i=new Intent(c,clazz);
+        i.putExtra("PATIENT_KEY", patient);
+        c.startActivity(i);
+    }
 
 
     /**

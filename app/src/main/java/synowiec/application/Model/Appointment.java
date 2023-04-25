@@ -10,10 +10,10 @@ public class Appointment implements Serializable {
     private String id;
 
     @SerializedName("patient_id")
-    private String patient_id;
+    private String patientId;
 
     @SerializedName("physio_id")
-    private String physio_id;
+    private String physioId;
 
     @SerializedName("date")
     private String date;
@@ -40,13 +40,13 @@ public class Appointment implements Serializable {
 
     public void setId(String id) { this.id = id; }
 
-    public String getPatient_id() {return patient_id;    }
+    public String getPatientId() {return patientId;    }
 
-    public void setPatient_id(String patient_id) {this.patient_id = patient_id;    }
+    public void setPatientId(String patientId) {this.patientId = patientId;    }
 
-    public String getPhysio_id() {return physio_id;    }
+    public String getPhysioId() {return physioId;    }
 
-    public void setPhysio_id(String physio_id) {this.physio_id = physio_id;    }
+    public void setPhysioId(String physioId) {this.physioId = physioId;    }
 
     public String getDate() { return date; }
 
@@ -80,8 +80,8 @@ public class Appointment implements Serializable {
     public String toString() {
         return "Appointment{" +
                 "id='" + id + '\'' +
-                ", patient_id='" + patient_id + '\'' +
-                ", physio_id='" + physio_id + '\'' +
+                ", patientId='" + patientId + '\'' +
+                ", physioId='" + physioId + '\'' +
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +
                 ", city='" + city + '\'' +

@@ -14,8 +14,6 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -23,7 +21,6 @@ import synowiec.application.R;
 import synowiec.application.Controller.ResponseModel;
 import synowiec.application.Controller.RestApi;
 import synowiec.application.Controller.Helpers.Utils;
-import synowiec.application.Model.Patient;
 
 import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
 
@@ -31,7 +28,7 @@ public class PatientRegisterActivity extends AppCompatActivity {
 
     private EditText nameET, surnameET, emailET, passwordET, c_passwordET;
     private Button btn_regist, btn_login;
-    private List<Patient> patientList = null;
+    private boolean isEmail;
     private ProgressBar loading;
     private Context c = PatientRegisterActivity.this;
 
@@ -64,71 +61,57 @@ public class PatientRegisterActivity extends AppCompatActivity {
         sPassword = passwordET.getText().toString();
         sC_password = c_passwordET.getText().toString();
         checkEmail(sEmail);
-        if (sEmail.isEmpty() || sName.isEmpty() || sSurname.isEmpty() || sPassword.isEmpty() || sC_password.isEmpty()) {
-            showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Przynajmniej jedno wymagane pole jest puste! ");
-        }else if (patientList == null) {
-                showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Podany email już istnieje! ");
-                emailET.setError("Podany email już istnieje!");
-        }
-        else if (!sC_password.equals(sPassword)) {
-            showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Wpisane hasła nie są takie same! ");
-            passwordET.setError("Hasła nie są takie same!");
-            c_passwordET.setError("Hasła nie są takie same!");
+        if (isEmail) {
+            showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Podany email już istnieje! ");
+            emailET.setError("Podany email już istnieje!");
+        } else if(sEmail.isEmpty() || sName.isEmpty() || sSurname.isEmpty() || sPassword.isEmpty() || sC_password.isEmpty()) {
+                showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Przynajmniej jedno wymagane pole jest puste! ");
+        } else if (!sC_password.equals(sPassword)) {
+                showInfoDialog(PatientRegisterActivity.this, "Błąd rejestracji! ", "Wpisane hasła nie są takie same! ");
+                passwordET.setError("Hasła nie są takie same!");
+                c_passwordET.setError("Hasła nie są takie same!");
         } else if (!sEmail.isEmpty() && !sPassword.isEmpty() && !sName.isEmpty() && !sSurname.isEmpty() && sC_password.equals(sPassword)) {
 
-            RestApi api = Utils.getClient().create(RestApi.class);
-            Call<ResponseModel> insertData = api.insertPatientData("INSERT", sName, sSurname, sEmail, sPassword);
+                RestApi api = Utils.getClient().create(RestApi.class);
+                Call<ResponseModel> insertData = api.insertPatientData("INSERT", sName, sSurname, sEmail, sPassword);
 
-            //    Utils.showProgressBar(mProgressBar);
+                insertData.enqueue(new Callback<ResponseModel>() {
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
 
-            insertData.enqueue(new Callback<ResponseModel>() {
-                @Override
-                public void onResponse(Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                        if (response == null || response.body() == null || response.body().getCode() == null) {
+                            Log.d( "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
+                            return;
+                        }
+                        String myResponseCode = response.body().getCode();
+                        if (myResponseCode.equals("1")) {
+                            System.out.printf("SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: " + myResponseCode);
+                            showInfoDialog(PatientRegisterActivity.this, "Gratulacje", "Pomyślnie zarejestrowano użytkownika");
+                            nameET.getText().clear();
+                            emailET.getText().clear();
+                            surnameET.getText().clear();
+                            passwordET.getText().clear();
+                            c_passwordET.getText().clear();
+                            btn_regist.setVisibility(View.GONE);
+                            btn_login.setVisibility(View.VISIBLE);
 
-                    if (response == null || response.body() == null || response.body().getCode() == null) {
-                        showInfoDialog(PatientRegisterActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
-                        return;
+                        } else if (myResponseCode.equalsIgnoreCase("2")) {
+                            System.out.printf( "UNSUCCESSFUL. However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. " +
+                                            " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: " + myResponseCode +
+                                            " \n 3. Most probably the problem is with PHP Code.");
+                        } else if (myResponseCode.equalsIgnoreCase("3")) {
+                            Log.d( "NO MYSQL CONNECTION", "Your PHP Code is unable to connect to mysql database. Make sure the database credentials are correct.");
+                        }
                     }
-
-                    Log.d("RETROFIT", "response : " + response.body().toString());
-                    String myResponseCode = response.body().getCode();
-
-                    if (myResponseCode.equals("1")) {
-                        System.out.printf("SUCCESS: \n 1. Data inserted Successfully. \n 2. ResponseCode: " + myResponseCode);
-                        showInfoDialog(PatientRegisterActivity.this, "Gratulacje", "Pomyślnie zarejestrowano użytkownika");
-                        nameET.getText().clear();
-                        emailET.getText().clear();
-                        surnameET.getText().clear();
-                        passwordET.getText().clear();
-                        c_passwordET.getText().clear();
-                        //getCurrentFocus().clearFocus();
-                        btn_regist.setVisibility(View.GONE);
-                        btn_login.setVisibility(View.VISIBLE);
-
-                    } else if (myResponseCode.equalsIgnoreCase("2")) {
-                        showInfoDialog(PatientRegisterActivity.this, "UNSUCCESSFUL",
-                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE" +
-                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: " + myResponseCode +
-                                        " \n 3. Most probably the problem is with your PHP Code.");
-                    } else if (myResponseCode.equalsIgnoreCase("3")) {
-                        showInfoDialog(PatientRegisterActivity.this, "NO MYSQL CONNECTION", "Your PHP Code is unable to connect to mysql database. Make sure you have supplied correct database credentials.");
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable t) {
+                        Log.d("RETROFIT", "FAILURE THROWN DURING INSERT. ERROR Message: " + t.getMessage());
                     }
-                    //       hideProgressBar(mProgressBar);
-                }
-
-                @Override
-                public void onFailure(Call<ResponseModel> call, Throwable t) {
-                    Log.d("RETROFIT", "ERROR: " + t.getMessage());
-                    //     hideProgressBar(mProgressBar);
-                    showInfoDialog(PatientRegisterActivity.this, "FAILURE",
-                            "FAILURE THROWN DURING INSERT." +
-                                    " ERROR Message: " + t.getMessage());
-                }
-            });
+                });
+            }
         }
-    }
 
-    private void checkEmail(String email){
+    public boolean checkEmail(String email){
             RestApi api = Utils.getClient().create(RestApi.class);
             Call<ResponseModel> retrievedData;
             retrievedData = api.checkPatientEmail("CHECK_EMAIL", email);
@@ -136,15 +119,11 @@ public class PatientRegisterActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
                         response) {
-                    if (response == null || response.body() == null) {
-                        showInfoDialog(PatientRegisterActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
-                        return;
-                    }
-                    if (response.isSuccessful() && response.body() != null) {
-                        patientList = response.body().getPatients();
-                    } else if (!response.isSuccessful()) {
-                        patientList = response.body().getPatients();
-                    }
+                    String myResponseCode = response.body().getCode();
+                    System.out.println("check email response code" + myResponseCode);
+                    if (myResponseCode.equals("0")) isEmail =false;
+                    if(myResponseCode.equals("1")) isEmail=true;
+                    System.out.println(isEmail);
                 }
                 @Override
                 public void onFailure(Call<ResponseModel> call, Throwable t) {
@@ -152,6 +131,7 @@ public class PatientRegisterActivity extends AppCompatActivity {
                     showInfoDialog(PatientRegisterActivity.this, "ERROR", t.getMessage());
                 }
             });
+            return isEmail;
     }
 
     private void initializeWidgets(){

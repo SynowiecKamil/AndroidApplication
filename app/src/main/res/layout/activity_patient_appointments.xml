@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/patient_appointments_linear_layout"
     tools:context=".Controller.PatientActivities.PatientAppointmentsActivity"
-    android:background="@color/teal"
+    android:background="@color/mint"
     android:orientation="vertical">
 
     <LinearLayout
@@ -14,23 +13,25 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_past"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_weight="1"
-        android:text="Minione"
-        android:backgroundTint="@color/tealgreen"
-        android:textSize="16dp"/>
+        <Button
+            android:id="@+id/btn_past"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="Minione"
+            android:backgroundTint="@color/spearmint"
+            android:textColor="@color/colorTextDark"
+            android:textSize="16dp"/>
 
-    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_weight="1"
-        android:text="Przyszłe"
-        android:backgroundTint="@color/teal"
-        android:textSize="16dp"/>
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="Przyszłe"
+            android:textColor="@color/colorTextDark"
+            android:backgroundTint="@color/mint"
+            android:textSize="16dp"/>
 
 
     </LinearLayout>

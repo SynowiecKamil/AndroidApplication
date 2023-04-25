@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.regex.Matcher;
@@ -45,6 +46,7 @@ public class ReservationConfirmFragment extends Fragment {
     LocalBroadcastManager localBroadcastManager;
     private SimpleDateFormat simpleDateFormat, displayDateFormat;
     Unbinder unbinder;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @BindView(R.id.txt_patient)
     TextView txt_patient;
@@ -67,8 +69,8 @@ public class ReservationConfirmFragment extends Fragment {
     public void confirmAppointment(){
         Appointment appointment = new Appointment();
 
-        appointment.setPatient_id(Utils.currentPatient.getId());
-        appointment.setPhysio_id(Utils.currentPhysio.getId());
+        appointment.setPatientId(Utils.currentPatient.getId());
+        appointment.setPhysioId(Utils.currentPhysio.getId());
         appointment.setTime(Integer.toString(Utils.currentTimeSlot));
         appointment.setDate(simpleDateFormat.format(Utils.currentDate.getTime()));
         appointment.setCity(Utils.currentPhysio.getCity());
@@ -76,8 +78,7 @@ public class ReservationConfirmFragment extends Fragment {
         appointment.setAddress(Utils.currentPhysio.getAddress());
         appointment.setPrice(Utils.currentPrice);
 
-        // send data to DB
-        insertAppointment(appointment.getPhysio_id(), appointment.getPatient_id(), appointment.getDate(), appointment.getTime(), appointment.getCity(), appointment.getTreatment(), appointment.getAddress(), appointment.getPrice());
+        insertAppointment(appointment);
     }
 
     BroadcastReceiver confirmBookingReceiver = new BroadcastReceiver() {
@@ -88,20 +89,19 @@ public class ReservationConfirmFragment extends Fragment {
     };
 
     private void setData() {
-
         txt_patient.setText(Utils.currentPatient.getName() + " " + Utils.currentPatient.getSurname());
         txt_physio.setText(Utils.currentPhysio.getName() + " " + Utils.currentPhysio.getSurname());
         txt_treatment.setText(Utils.currentTreatment);
         txt_time.setText(new StringBuilder(Utils.convertTimeSlotToString(Utils.currentTimeSlot)));
         txt_date.setText(displayDateFormat.format(Utils.currentDate.getTime()));
         txt_place.setText(Utils.currentPhysio.getCity()+", "+Utils.currentPhysio.getAddress());
-        txt_price.setText(String.valueOf(Utils.currentPrice) + " zł");
+        txt_price.setText(df.format(Utils.currentPrice) + " zł");
     }
 
-    private void insertAppointment(String physioId, String patientId, String date, String time, String city, String treatment, String address, double price){
+    private void insertAppointment(Appointment appointment){
 
         RestApi api = Utils.getClient().create(RestApi.class);
-        Call<ResponseModel> insertData = api.insertAppointment("INSERT", physioId, patientId, date, time, city, treatment, address, price);
+        Call<ResponseModel> insertData = api.insertAppointment("INSERT", appointment.getPhysioId(), appointment.getPatientId(), appointment.getDate(), appointment.getTime(), appointment.getCity(), appointment.getTreatment(), appointment.getAddress(), appointment.getPrice());
 
         //    Utils.showProgressBar(mProgressBar);
 
@@ -186,6 +186,7 @@ public class ReservationConfirmFragment extends Fragment {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         localBroadcastManager.registerReceiver(confirmBookingReceiver, new IntentFilter(Utils.KEY_CONFIRM_BOOKING));
+        System.out.println(Utils.currentPrice);
 
     }
 

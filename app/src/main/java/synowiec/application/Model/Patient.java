@@ -69,4 +69,17 @@ public class Patient implements Serializable {
     public String getSurname() { return surname;    }
 
     public void setSurname(String surname) { this.surname = surname;    }
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", photo='" + photo + '\'' +
+                ", surname='" + surname + '\'' +
+                '}';
+    }
 }
+

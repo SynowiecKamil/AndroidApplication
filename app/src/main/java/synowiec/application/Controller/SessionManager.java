@@ -13,10 +13,10 @@ import synowiec.application.Controller.PatientActivities.PatientLoginActivity;
 
 public class SessionManager {
 
-    SharedPreferences sharedPreferences;
-    public SharedPreferences.Editor editor;
-    public Context context;
-    int PRIVATE_MODE = 0;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Context context;
+    private int PRIVATE_MODE = 0;
 
     private static final String PREF_NAME = "LOGIN";
     private static final String LOGIN = "IS_LOGIN";
@@ -38,7 +38,7 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    public void createSession(String id, String name, String email, String photo, String surname, String profession_number, String city, String description, String address, String days, String hours){
+    public void createSession(String id, String name, String email, String photo, String surname, String professionNumber, String city, String description, String address, String days, String hours){
 
         editor.putBoolean(LOGIN, true);
         editor.putString(NAME, name);
@@ -46,7 +46,7 @@ public class SessionManager {
         editor.putString(ID, id);
         editor.putString(PHOTO, photo);
         editor.putString(SURNAME, surname);
-        editor.putString(PROFESSION_NUMBER, profession_number);
+        editor.putString(PROFESSION_NUMBER, professionNumber);
         editor.putString(CITY, city);
         editor.putString(DESCRIPTION, description);
         editor.putString(ADDRESS, address);
@@ -68,20 +68,20 @@ public class SessionManager {
 
     }
 
-    public boolean isLoggin(){
+    public boolean isLogged(){
         return sharedPreferences.getBoolean(LOGIN, false);
     }
 
-    public void checkLogin(String user){
+    public void checkLogin(String userType){
 
-        if(user == "patient"){
-            if (!this.isLoggin()){
+        if(userType == "patient"){
+            if (!this.isLogged()){
                 Intent i = new Intent(context, PatientLoginActivity.class);
                 context.startActivity(i);
                 ((PatientDashboardActivity) context).finish();
             }
         }else{
-            if (!this.isLoggin()){
+            if (!this.isLogged()){
                 Intent i = new Intent(context, PhysioLoginActivity.class);
                 context.startActivity(i);
                 ((PhysioDashboardActivity) context).finish();
@@ -115,9 +115,9 @@ public class SessionManager {
         return user;
     }
 
-    public void logout(String user){
+    public void logout(String userType){
 
-        if(user == "patient"){
+        if(userType == "patient"){
             editor.clear();
             editor.commit();
             Intent i = new Intent(context, PatientLoginActivity.class);
@@ -133,5 +133,6 @@ public class SessionManager {
 
 
     }
+
 
 }

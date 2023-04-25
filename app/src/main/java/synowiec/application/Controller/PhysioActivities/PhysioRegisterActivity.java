@@ -141,9 +141,9 @@ public class PhysioRegisterActivity extends AppCompatActivity {
                     return;
                 }
                 if (response.isSuccessful() && response.body() != null) {
-                    physiotherapistList = response.body().getResult();
+                    physiotherapistList = response.body().getPhysiotherapists();
                 } else if (!response.isSuccessful()) {
-                    physiotherapistList = response.body().getResult();
+                    physiotherapistList = response.body().getPhysiotherapists();
                 }
             }
             @Override

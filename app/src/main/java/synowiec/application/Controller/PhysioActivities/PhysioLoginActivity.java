@@ -1,7 +1,6 @@
 package synowiec.application.Controller.PhysioActivities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -46,7 +46,9 @@ public class PhysioLoginActivity extends AppCompatActivity {
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {loginUser();}
+            public void onClick(View v) {
+                loginUser();
+            }
         });
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,34 +86,31 @@ public class PhysioLoginActivity extends AppCompatActivity {
                         showInfoDialog(PhysioLoginActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
                         return;
                     }
-                    if (response.isSuccessful() && response.body() != null) {
-                        currentPhysio = response.body().getResult();
+                    String myResponseCode = response.body().getCode();
+                    if (myResponseCode.equals("1")) {
+                        currentPhysio = response.body().getPhysiotherapists();
                         for (int i = 0; i < currentPhysio.size(); i++) {
                             Utils.currentPhysio = currentPhysio.get(i);
-                                sessionManager.createSession(currentPhysio.get(i).getId(), currentPhysio.get(i).getName(), currentPhysio.get(i).getEmail(), currentPhysio.get(i).getPhoto(),
-                                        currentPhysio.get(i).getSurname(), currentPhysio.get(i).getProfession_number(), currentPhysio.get(i).getCity(), currentPhysio.get(i).getDescription(),
+                            sessionManager.createSession(currentPhysio.get(i).getId(), currentPhysio.get(i).getName(), currentPhysio.get(i).getEmail(), currentPhysio.get(i).getPhoto(),
+                                        currentPhysio.get(i).getSurname(), currentPhysio.get(i).getProfessionNumber(), currentPhysio.get(i).getCity(), currentPhysio.get(i).getDescription(),
                                         currentPhysio.get(i).getAddress(), currentPhysio.get(i).getDays(), currentPhysio.get(i).getHours());
-                                Intent intent = new Intent(PhysioLoginActivity.this, PhysioDashboardActivity.class);
-                                intent.putExtra("name", currentPhysio.get(i).getName());
-                                intent.putExtra("email", currentPhysio.get(i).getEmail());
-                                intent.putExtra("id", currentPhysio.get(i).getId());
-                                intent.putExtra("photo", currentPhysio.get(i).getPhoto());
-                                intent.putExtra("surname", currentPhysio.get(i).getSurname());
-                                intent.putExtra("profession_number", currentPhysio.get(i).getProfession_number());
-                                intent.putExtra("cabinet", currentPhysio.get(i).getCity());
-                                intent.putExtra("description", currentPhysio.get(i).getDescription());
-                                intent.putExtra("cabinet_address", currentPhysio.get(i).getAddress());
-                                intent.putExtra("days", currentPhysio.get(i).getDays());
-                                intent.putExtra("days", currentPhysio.get(i).getHours());
-                                startActivity(intent);
-                                finish();
-                                loading.setVisibility(View.GONE);
+                            Utils.openActivity(c, PhysioDashboardActivity.class);
+                            finish();
+                            loading.setVisibility(View.GONE);
                         }
-                    } else if (!response.isSuccessful()) {
-                        showInfoDialog(PhysioLoginActivity.this, "UNSUCCESSFUL",
-                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE" +
-                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: " + " " +
-                                        " \n 3. Most probably the problem is with your PHP Code.");
+                    } else if (myResponseCode.equalsIgnoreCase("2")) {
+                        Toast.makeText(PhysioLoginActivity.this, "Bląd! Niepoprawne hasło.", Toast.LENGTH_SHORT).show();
+                        password.setError("Niepoprawne hasło");
+                        password.requestFocus();
+                        loading.setVisibility(View.GONE);
+                    }else if (myResponseCode.equalsIgnoreCase("3")) {
+                        Log.d("RETROFIT", "ERROR: " + "NO MYSQL CONNECTION, PHP Code is unable to connect to mysql database.");
+                    }else if (myResponseCode.equalsIgnoreCase("0")) {
+                        Toast.makeText(PhysioLoginActivity.this, "Bląd! Użytkownik o podanym adresie email nie istnieje w systemie.", Toast.LENGTH_SHORT).show();
+                        email.setError("Niepoprawny email");
+                        password.setError("Niepoprawne hasło");
+                        email.requestFocus();
+                        loading.setVisibility(View.GONE);
                     }
                 }
 
@@ -122,6 +121,7 @@ public class PhysioLoginActivity extends AppCompatActivity {
                 }
             });
         } else {
+            Toast.makeText(PhysioLoginActivity.this, "Wprowadź email lub hasło!", Toast.LENGTH_SHORT).show();
             email.setError("Proszę wprowadź email");
             password.setError("Proszę wprowadź hasło");
         }

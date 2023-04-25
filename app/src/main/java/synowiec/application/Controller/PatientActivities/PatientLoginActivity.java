@@ -1,6 +1,7 @@
 package synowiec.application.Controller.PatientActivities;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +18,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import synowiec.application.Controller.MainActivity;
+import synowiec.application.Controller.PhysioActivities.PhysioDashboardActivity;
+import synowiec.application.Controller.PhysioActivities.PhysioLoginActivity;
+import synowiec.application.Controller.ResponseModel;
+import synowiec.application.Model.Patient;
+import synowiec.application.Model.Physiotherapist;
 import synowiec.application.R;
 import synowiec.application.Controller.SessionManager;
 import synowiec.application.Controller.RestApi;
@@ -33,6 +43,8 @@ public class PatientLoginActivity extends AppCompatActivity {
     private Button btn_login, btn_back;
     private TextView link_regist;
     private ProgressBar loading;
+    private List<Patient> currentPatientList = new ArrayList<>();
+    private Context c;
     SessionManager sessionManager;
 
     @Override
@@ -64,89 +76,64 @@ public class PatientLoginActivity extends AppCompatActivity {
     private void loginUser(){
         loading.setVisibility(View.VISIBLE);
         String sEmail, sPassword;
-        sEmail = email.getText().toString();
-        sPassword = password.getText().toString();
+        sEmail = email.getText().toString().trim();
+        sPassword = password.getText().toString().trim();
 
         if (!sEmail.isEmpty() || !sPassword.isEmpty()) {
-
             RestApi api = Utils.getClient().create(RestApi.class);
-            Call<String> login = api.getPatientLogin("LOGIN", sEmail, sPassword);
-
-            //    Utils.showProgressBar(mProgressBar);
-
-            login.enqueue(new Callback<String>() {
+            Call<ResponseModel> retrievedData;
+            retrievedData = api.getPatientLogin("LOGIN", sEmail, sPassword);
+            retrievedData.enqueue(new Callback<ResponseModel>() {
                 @Override
-                public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-
-                    if(response == null || response.body() == null ){
-                        showInfoDialog(PatientLoginActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
+                public void onResponse(Call<ResponseModel> call, Response<ResponseModel>
+                        response) {
+                    if (response == null || response.body() == null) {
+                        showInfoDialog(PatientLoginActivity.this, "ERROR", "Response or Response Body is null. \n Recheck Your PHP code.");
                         return;
                     }
-
-                 //   Log.d("RETROFIT", "response : " + response.body().toString());
-                    String myResponse = response.body().toString();
-
-                    if (response.isSuccessful() && response.body() != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(myResponse);
-                            JSONArray jsonArray = jsonObject.getJSONArray("result");
-
-                            for (int i = 0; i < jsonArray.length(); i++) {
-
-                                JSONObject object = jsonArray.getJSONObject(i);
-
-                                String id = object.getString("id").trim();
-                                String name = object.getString("name").trim();
-                                String email = object.getString("email").trim();
-                                String photo = object.getString("photo").trim();
-                                String surname = object.getString("surname").trim();
-
-                                sessionManager.createSession(id, name, email, photo, surname);
-                                Intent intent = new Intent(PatientLoginActivity.this, PatientDashboardActivity.class);
-                                intent.putExtra("name", name);
-                                intent.putExtra("email", email);
-                                intent.putExtra("photo", photo);
-                                intent.putExtra("surname", surname);
-                                startActivity(intent);
-                                finish();
-
-                                loading.setVisibility(View.GONE);
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    String myResponseCode = response.body().getCode();
+                    System.out.println("Response code: "+myResponseCode+ " message: " + response.body().getMessage());
+                    if (myResponseCode.equals("1")) {
+                        currentPatientList = response.body().getPatients();
+                        for (int i = 0; i < currentPatientList.size(); i++) {
+                            Utils.currentPatient = currentPatientList.get(i);
+                            sessionManager.createSession(currentPatientList.get(i).getId(), currentPatientList.get(i).getName(),
+                                    currentPatientList.get(i).getEmail(), currentPatientList.get(i).getPhoto(),
+                                    currentPatientList.get(i).getSurname());
+                            Utils.sendPatientToActivity(c, currentPatientList.get(i), PatientDashboardActivity.class);
+                            finish();
                             loading.setVisibility(View.GONE);
-                            btn_login.setVisibility(View.VISIBLE);
-                            Toast.makeText(PatientLoginActivity.this, "Bląd! Błędne dane logowania ", Toast.LENGTH_SHORT).show();
                         }
-                    } else if (!response.isSuccessful()) {
-                        showInfoDialog(PatientLoginActivity.this, "UNSUCCESSFUL",
-                                "However Good Response. \n 1. CONNECTION TO SERVER WAS SUCCESSFUL \n 2. WE"+
-                                        " ATTEMPTED POSTING DATA BUT ENCOUNTERED ResponseCode: "+" " +
-                                        " \n 3. Most probably the problem is with your PHP Code.");
+                    } else if (myResponseCode.equalsIgnoreCase("2")) {
+                        Toast.makeText(c, "Bląd! Niepoprawne hasło.", Toast.LENGTH_SHORT).show();
+                        password.setError("Niepoprawne hasło");
+                        password.requestFocus();
+                    }else if (myResponseCode.equalsIgnoreCase("3")) {
+                        Log.d("RETROFIT", "ERROR: " + "NO MYSQL CONNECTION, PHP Code is unable to connect to mysql database.");
+                    }else if (myResponseCode.equalsIgnoreCase("0")) {
+                        Toast.makeText(c, "Bląd! Użytkownik o podanym adresie email nie istnieje w systemie.", Toast.LENGTH_SHORT).show();
+                        email.setError("Niepoprawny email");
+                        email.requestFocus();
                     }
-                    //       hideProgressBar(mProgressBar);
                 }
+
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<ResponseModel> call, Throwable t) {
                     Log.d("RETROFIT", "ERROR: " + t.getMessage());
-                    //     hideProgressBar(mProgressBar);
-                    showInfoDialog(PatientLoginActivity.this, "FAILURE",
-                            "FAILURE THROWN DURING INSERT."+
-                                    " ERROR Message: " + t.getMessage());
+                    showInfoDialog(PatientLoginActivity.this, "ERROR", t.getMessage());
                 }
             });
         } else {
-            email.setError("Proszę wprowadzić email");
-            password.setError("Proszę wprowadzić hasło");
-            loading.setVisibility(View.GONE);
+            Toast.makeText(c, "Wprowadź email lub hasło!", Toast.LENGTH_SHORT).show();
+            email.setError("Proszę wprowadź email");
+            password.setError("Proszę wprowadź hasło");
         }
     }
 
     private void initializeWidgets(){
         getSupportActionBar().hide();
         sessionManager = new SessionManager(this);
+        c = PatientLoginActivity.this;
         loading = findViewById(R.id.loading);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);

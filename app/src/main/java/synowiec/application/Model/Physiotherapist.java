@@ -18,7 +18,7 @@ public class Physiotherapist implements Serializable {
     @SerializedName("surname")
     private String surname;
     @SerializedName("profession_number")
-    private String profession_number;
+    private String professionNumber;
     @SerializedName("city")
     private String city;
     @SerializedName("description")
@@ -30,14 +30,14 @@ public class Physiotherapist implements Serializable {
     @SerializedName("hours")
     private String hours;
 
-    public Physiotherapist(String id, String name, String email, String password, String photo, String surname, String profession_number, String city, String description, String address, String days, String hours) {
+    public Physiotherapist(String id, String name, String email, String password, String photo, String surname, String professionNumber, String city, String description, String address, String days, String hours) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.photo = photo;
         this.surname = surname;
-        this.profession_number = profession_number;
+        this.professionNumber = professionNumber;
         this.city = city;
         this.description = description;
         this.address = address;
@@ -89,11 +89,11 @@ public class Physiotherapist implements Serializable {
         this.surname = surname;
     }
 
-    public String getProfession_number() {
-        return profession_number;
+    public String getProfessionNumber() {
+        return professionNumber;
     }
 
-    public void setProfession_number(String profession_number) {        this.profession_number = profession_number;    }
+    public void setProfessionNumber(String professionNumber) {        this.professionNumber = professionNumber;    }
 
     public String getCity() {
         return city;
@@ -132,7 +132,7 @@ public class Physiotherapist implements Serializable {
                 ", password='" + password + '\'' +
                 ", photo='" + photo + '\'' +
                 ", surname='" + surname + '\'' +
-                ", profession_number='" + profession_number + '\'' +
+                ", professionNumber='" + professionNumber + '\'' +
                 ", city='" + city + '\'' +
                 ", description='" + description + '\'' +
                 ", address='" + address + '\'' +

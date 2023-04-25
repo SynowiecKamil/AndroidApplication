@@ -11,7 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="googlemap_key">AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y</string>
-    <!--    <string name="googlemap_key2">https://maps.googleapis.com/maps/api/place/autocomplete/json?input=ban&types=(cities)&key=AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y</string>-->
+<!--        <string name="googlemap_key2">https://maps.googleapis.com/maps/api/place/autocomplete/json?input=ban&types=(cities)&key=AIzaSyCs_T_Q6jubcsv1FjNfr-eY9FQxEDFq6_Y</string>-->
 
 
     <string name="treatment_prompt">Wybierz zabieg</string>

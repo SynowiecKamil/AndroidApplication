@@ -178,7 +178,7 @@ public class TreatmentDialog extends AppCompatDialogFragment{
                     Utils.show(c,"ERROR, Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
-                Log.d("RETROFIT", "Response: " + response.body().getResult());
+                Log.d("RETROFIT", "Response: " + response.body().getPhysiotherapists());
 
                 String myResponseCode = response.body().getCode();
 

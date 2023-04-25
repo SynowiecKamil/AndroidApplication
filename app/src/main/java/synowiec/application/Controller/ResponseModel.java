@@ -29,13 +29,13 @@ public class ResponseModel {
     private String message = "UNKNOWN MESSAGE";
 
     /**
-     * Generate Getter and Setters
+     * Generate Getters and Setters
      */
-    public List<Physiotherapist> getResult() {
+    public List<Physiotherapist> getPhysiotherapists() {
         return physiotherapists;
     }
 
-    public void setResult(List<Physiotherapist> physiotherapists) { this.physiotherapists = physiotherapists; }
+    public void setPhysiotherapists(List<Physiotherapist> physiotherapists) { this.physiotherapists = physiotherapists; }
 
     public List<Patient> getPatients() { return patients; }
 

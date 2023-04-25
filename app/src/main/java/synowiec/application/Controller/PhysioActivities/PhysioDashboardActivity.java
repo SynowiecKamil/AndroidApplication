@@ -402,7 +402,7 @@ public class PhysioDashboardActivity extends AppCompatActivity implements Treatm
                     showInfoDialog(PhysioDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
-                Log.d("RETROFIT", "Response: " + response.body().getResult());
+                Log.d("RETROFIT", "Response: " + response.body().getPhysiotherapists());
 
                 hideProgressBar(mProgressBar);
                 String myResponseCode = response.body().getCode();

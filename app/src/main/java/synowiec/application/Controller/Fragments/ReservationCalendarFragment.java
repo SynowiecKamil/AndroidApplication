@@ -93,7 +93,7 @@ public class ReservationCalendarFragment extends Fragment implements ITimeSlotLo
             }
         };
 
-        View itemView = inflater.inflate(R.layout.fragment_patient_calendar, container, false);
+        View itemView = inflater.inflate(R.layout.fragment_reservation_calendar, container, false);
         unbinder = ButterKnife.bind(this, itemView);
         init(itemView, myDate);
         if(choose_date == null) horizontalCalendar.selectDate(startDate, true);

@@ -160,7 +160,7 @@
                 android:id="@+id/imageView_price"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/time" />
+                android:src="@drawable/wallet" />
 
             <TextView
                 android:layout_width="wrap_content"

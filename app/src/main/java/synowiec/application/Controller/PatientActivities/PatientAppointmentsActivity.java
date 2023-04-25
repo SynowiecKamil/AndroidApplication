@@ -61,14 +61,14 @@ public class PatientAppointmentsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setupRecyclerView(appointmentsList);
-                linearLayout.setBackgroundColor(getResources().getColor(R.color.teal));
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.mint));
             }
         });
         btnPast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setupRecyclerView(appointmentsPastList);
-                linearLayout.setBackgroundColor(getResources().getColor(R.color.tealgreen));
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.spearmint));
             }
         });
 

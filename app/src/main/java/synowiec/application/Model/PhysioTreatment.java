@@ -7,18 +7,19 @@ public class PhysioTreatment implements Serializable {
 
     @SerializedName("id")
     private String id;
-    @SerializedName("physioID")
-    private String physioID;
-    @SerializedName("treatmentID")
-    private String treatmentID;
+    @SerializedName("physioId")
+    private String physioId;
+    @SerializedName("treatmentId")
+    private String treatmentId;
     @SerializedName("price")
     private double price;
 
 
-    public PhysioTreatment(String id, String physioID, String treatmentID) {
+    public PhysioTreatment(String id, String physioId, String treatmentId, double price) {
         this.id = id;
-        this.physioID = physioID;
-        this.treatmentID = treatmentID;
+        this.physioId = physioId;
+        this.treatmentId = treatmentId;
+        this.price = price;
     }
 
     public String getId() {
@@ -29,20 +30,20 @@ public class PhysioTreatment implements Serializable {
         this.id = id;
     }
 
-    public String getPhysioID() {
-        return physioID;
+    public String getPhysioId() {
+        return physioId;
     }
 
-    public void setPhysioID(String physioID) {
-        this.physioID = physioID;
+    public void setPhysioId(String physioId) {
+        this.physioId = physioId;
     }
 
-    public String getTreatmentID() {
-        return treatmentID;
+    public String getTreatmentId() {
+        return treatmentId;
     }
 
-    public void setTreatmentID(String treatmentID) {
-        this.treatmentID = treatmentID;
+    public void setTreatmentId(String treatmentId) {
+        this.treatmentId = treatmentId;
     }
 
     public double getPrice() {

@@ -40,7 +40,7 @@ import static synowiec.application.Controller.Helpers.Utils.showInfoDialog;
 
 public class PhysioDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView nameTextView , emailTextView , locationTextView ;
+    private TextView nameTextView , emailTextView , locationTextView, descriptionTextView;
     private Button backBTN, appointmentBTN;
     private ListView treatmentLV;
     private ArrayAdapter<String> adapter;
@@ -78,12 +78,10 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
         appointmentBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(PhysioDetailActivity.this, PatientReservationActivity.class);
                 intent.putExtra("PHYSIOTHERAPIST_KEY", receivedPhysiotherapist);
                 intent.putExtra("APPOINTMENT_KEY", (Serializable) currentAppointments);
                 PhysioDetailActivity.this.startActivity(intent);
-
                 finish();
             }
         });
@@ -94,6 +92,7 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
         if(receivedPhysiotherapist !=null){
             nameTextView.setText(receivedPhysiotherapist.getName() +" "+ receivedPhysiotherapist.getSurname());
             emailTextView.setText("Email: " + receivedPhysiotherapist.getEmail());
+            descriptionTextView.setText(receivedPhysiotherapist.getDescription());
             locationTextView.setText("Adres gabinetu: " + receivedPhysiotherapist.getCity() + ", " + receivedPhysiotherapist.getAddress());
             Picasso.get().load(receivedPhysiotherapist.getPhoto())
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
@@ -218,9 +217,11 @@ public class PhysioDetailActivity extends AppCompatActivity implements View.OnCl
     private void initializeWidgets(){
         getSupportActionBar().hide();
         nameTextView  = findViewById(R.id.name);
-        nameTextView .setFocusableInTouchMode(false);
+        nameTextView.setFocusableInTouchMode(false);
         emailTextView  = findViewById(R.id.email);
-        emailTextView .setFocusableInTouchMode(false);
+        emailTextView.setFocusableInTouchMode(false);
+        descriptionTextView = findViewById(R.id.description);
+        descriptionTextView.setFocusableInTouchMode(false);
         locationTextView = findViewById(R.id.location);
         profile_image = findViewById(R.id.profile_image);
         backBTN = findViewById(R.id.btn_back);

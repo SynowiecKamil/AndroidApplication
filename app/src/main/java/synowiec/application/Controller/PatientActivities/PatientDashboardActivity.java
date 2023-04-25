@@ -309,22 +309,6 @@ public class PatientDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void showData2(Patient patient){
-        if(user.containsValue(null) != true){
-            System.out.println(patient.toString());
-            name.setText(patient.getName());
-            email.setText(patient.getEmail());
-            surname.setText(patient.getSurname());
-            Picasso.get().load(patient.getPhoto())
-                    .memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .networkPolicy(NetworkPolicy.NO_CACHE)
-                    .into(profile_image);
-            System.out.println("Znaleziono uzytkownika");
-        }else{
-            System.out.println("Brak uzytkownika");
-        }
-    }
-
     private void updateData() {
         String sName, sEmail, sId, sSurname;
         sName = name.getText().toString();
@@ -343,7 +327,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
                     showInfoDialog(PatientDashboardActivity.this,"ERROR","Response or Response Body is null. \n Recheck Your PHP code.");
                     return;
                 }
-                Log.d("RETROFIT", "Response: " + response.body().getResult());
+                Log.d("RETROFIT", "Response: " + response.body().getPhysiotherapists());
 
                 hideProgressBar(mProgressBar);
                 String myResponseCode = response.body().getCode();
